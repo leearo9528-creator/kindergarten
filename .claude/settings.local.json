@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(vercel --version)",
+      "Bash(vercel whoami *)",
+      "Bash(vercel login *)",
+      "Bash(python -m http.server 8080)",
+      "Bash(curl -s -o /dev/null -w \"HTTP: %{http_code}\\\\n\" http://localhost:8080/)"
+    ]
+  }
+}

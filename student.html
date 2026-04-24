@@ -360,13 +360,22 @@
 
 <script>
   // Tab switching
+  function activateTab(name){
+    document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(x => x.classList.remove('active'));
+    const t = document.querySelector('.tab[data-tab="'+name+'"]');
+    const p = document.getElementById('panel-' + name);
+    if (t && p) { t.classList.add('active'); p.classList.add('active'); }
+  }
   document.querySelectorAll('.tab').forEach(t => {
-    t.addEventListener('click', () => {
-      document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
-      document.querySelectorAll('.panel').forEach(x => x.classList.remove('active'));
-      t.classList.add('active');
-      document.getElementById('panel-' + t.dataset.tab).classList.add('active');
-    });
+    t.addEventListener('click', () => activateTab(t.dataset.tab));
+  });
+  // 해시 기반 초기 탭 선택 (예: #safety, #story, #qa)
+  const initialHash = (location.hash || '').replace('#','');
+  if (initialHash) activateTab(initialHash);
+  window.addEventListener('hashchange', () => {
+    const h = (location.hash || '').replace('#','');
+    if (h) activateTab(h);
   });
 
   // Safety scout

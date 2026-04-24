@@ -276,6 +276,46 @@
   }
   .bg-cream { background: var(--cream); }
   .center { text-align: center !important; }
+
+  /* Hero photo (right side image) */
+  .hero-photo {
+    width: 100%;
+    aspect-ratio: 4/3;
+    object-fit: cover;
+    border-radius: 16px;
+    box-shadow: 0 6px 22px rgba(0,0,0,0.15);
+    background: linear-gradient(135deg, #FFC8DD, #BDE0FE);
+  }
+  .split-layout {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 20px;
+    align-items: center;
+    margin-top: 8px;
+  }
+  /* Full-bleed section cover photos */
+  .cover-photo {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    opacity: 0.35;
+    z-index: 0;
+  }
+  .section-cover { position: relative; overflow: hidden; }
+  .section-cover > * { position: relative; z-index: 1; }
+
+  /* title slide photo */
+  .title-photo-wrap {
+    width: 240px;
+    height: 240px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin: 10px auto 0;
+    box-shadow: 0 10px 30px rgba(255,143,177,0.35);
+    border: 6px solid white;
+  }
+  .title-photo-wrap img { width:100%; height:100%; object-fit:cover; }
 </style>
 </head>
 <body>
@@ -285,10 +325,12 @@
 
     <!-- Title -->
     <section class="title-slide" data-background-color="#FFE5EC">
-      <span class="emoji">🎨👶</span>
-      <h1>미래를 그리는 화가,<br>유치원 선생님</h1>
+      <div class="title-photo-wrap">
+        <img src="https://loremflickr.com/600/600/kindergarten,children,happy?lock=11" alt="유치원 아이들">
+      </div>
+      <h1 style="margin-top:20px;">미래를 그리는 화가,<br>유치원 선생님</h1>
       <p class="subtitle">중학생을 위한 진로 특강</p>
-      <p style="margin-top:40px; color:#777; font-size:0.9em;">한 아이의 세계를 설계하는 교육 전문가</p>
+      <p style="margin-top:20px; color:#777; font-size:0.85em;">한 아이의 세계를 설계하는 교육 전문가</p>
     </section>
 
     <!-- 오늘의 여정 -->
@@ -317,37 +359,9 @@
       </div>
     </section>
 
-    <!-- QR 접속 안내 -->
-    <section data-background-color="#FFF8E7" style="text-align:center;">
-      <span class="badge" style="background:var(--pink); color:white;">📱 학생 활동 페이지</span>
-      <h2 style="text-align:center; font-size:1.5em; margin-bottom:4px;">스마트폰으로 QR을 찍어주세요</h2>
-      <p style="text-align:center; font-size:0.78em; color:#666; margin:0 0 14px 0;">
-        체험활동에 직접 참여할 수 있는 페이지가 열려요
-      </p>
-      <div style="display:grid; grid-template-columns: auto 1fr; gap:24px; max-width:820px; margin:0 auto; align-items:center;">
-        <div style="background:white; padding:16px; border-radius:16px; box-shadow:0 6px 22px rgba(0,0,0,0.12); border:3px solid var(--pink);">
-          <img id="qr-img" alt="학생 페이지 QR" style="display:block; width:260px; height:260px;">
-          <p id="qr-url" style="margin:10px 0 0; font-size:0.55em; color:#666; word-break:break-all; text-align:center;"></p>
-        </div>
-        <div style="text-align:left;">
-          <div style="background:white; border-radius:12px; padding:14px 18px; box-shadow:0 3px 12px rgba(0,0,0,0.06); margin-bottom:10px;">
-            <p style="margin:0 0 6px 0; font-size:0.85em; font-weight:700; color:var(--pink);">🔍 안전 보안관</p>
-            <p style="margin:0; font-size:0.7em; color:#555;">교실 위험 요소 체크리스트</p>
-          </div>
-          <div style="background:white; border-radius:12px; padding:14px 18px; box-shadow:0 3px 12px rgba(0,0,0,0.06); margin-bottom:10px;">
-            <p style="margin:0 0 6px 0; font-size:0.85em; font-weight:700; color:var(--blue);">🎭 구연동화왕</p>
-            <p style="margin:0; font-size:0.7em; color:#555;">동화 랜덤 뽑기 + 1분 타이머</p>
-          </div>
-          <div style="background:white; border-radius:12px; padding:14px 18px; box-shadow:0 3px 12px rgba(0,0,0,0.06);">
-            <p style="margin:0 0 6px 0; font-size:0.85em; font-weight:700; color:var(--mint);">🙋 질문 남기기</p>
-            <p style="margin:0; font-size:0.7em; color:#555;">선생님께 익명 질문 보내기</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
     <!-- 1교시 커버 -->
     <section class="section-cover">
+      <div class="cover-photo" style="background-image:url('https://loremflickr.com/1600/900/classroom,children,teacher?lock=21');"></div>
       <div class="big-num">01</div>
       <h1>'놀이'를 '교육'으로<br>만드는 사람</h1>
       <p style="font-size:1.2em; margin-top:20px;">유치원 교사의 전문성과 하루 일과</p>
@@ -357,13 +371,16 @@
     <section data-background-color="#FFF8E7">
       <span class="badge">🌱 도입</span>
       <h2>여러분은 유치원 때<br>어떤 선생님이 기억나나요?</h2>
-      <div class="highlight-box" style="margin-top:30px;">
-        <p style="font-size:1.1em;">🎤 <b>3초 명상 타임</b></p>
-        <p style="font-size:0.95em; color:#555;">
-          · 선생님 얼굴이 떠오르나요?<br>
-          · 어떤 노래나 놀이가 생각나나요?<br>
-          · 그 선생님은 '놀아준 사람'이었을까요, '가르친 사람'이었을까요?
-        </p>
+      <div class="split-layout">
+        <div class="highlight-box" style="margin:0;">
+          <p style="font-size:1em;">🎤 <b>3초 명상 타임</b></p>
+          <p style="font-size:0.8em; color:#555;">
+            · 선생님 얼굴이 떠오르나요?<br>
+            · 어떤 노래나 놀이가 생각나나요?<br>
+            · 그 선생님은 '놀아준 사람'이었을까요, '가르친 사람'이었을까요?
+          </p>
+        </div>
+        <img class="hero-photo" src="https://loremflickr.com/800/600/kindergarten,memory,children?lock=31" alt="유치원 추억">
       </div>
     </section>
 
@@ -390,7 +407,10 @@
     <!-- 누리과정 -->
     <section data-background-color="#FFF8E7">
       <span class="badge" style="background:var(--blue); color:white;">국가 교육과정</span>
-      <h2>'누리과정'을 아시나요?</h2>
+      <h2 style="display:flex; align-items:center; gap:14px;">
+        <img src="https://loremflickr.com/120/120/children,learning,book?lock=81" style="width:54px; height:54px; border-radius:50%; object-fit:cover; box-shadow:0 4px 12px rgba(0,0,0,0.15);" alt="누리과정">
+        '누리과정'을 아시나요?
+      </h2>
       <div class="highlight-box blue">
         <p style="font-size:1.2em; font-weight:700; margin:0;">
           📘 만 3~5세를 위한 <span style="color:var(--blue);">국가 수준의 교육과정</span>
@@ -410,7 +430,10 @@
 
     <!-- 교사의 하루 -->
     <section data-background-color="#FFF8E7">
-      <h2>선생님의 하루는 이렇게 흘러갑니다</h2>
+      <h2 style="display:flex; align-items:center; gap:14px;">
+        <img src="https://loremflickr.com/120/120/teacher,classroom?lock=41" style="width:54px; height:54px; border-radius:50%; object-fit:cover; box-shadow:0 4px 12px rgba(0,0,0,0.15);" alt="교사">
+        선생님의 하루는 이렇게 흘러갑니다
+      </h2>
       <div class="timeline">
         <div class="step"><span class="emo">🌅</span><b>등원 맞이</b><br>표정 관찰, 컨디션 체크</div>
         <div class="arrow">→</div>
@@ -460,7 +483,10 @@
     <!-- 되는 법 -->
     <section data-background-color="#FFF8E7">
       <span class="badge" style="background:var(--mint); color:white;">커리어 로드맵</span>
-      <h2>유치원 선생님이 되는 길</h2>
+      <h2 style="display:flex; align-items:center; gap:14px;">
+        <img src="https://loremflickr.com/120/120/graduation,student?lock=91" style="width:54px; height:54px; border-radius:50%; object-fit:cover; box-shadow:0 4px 12px rgba(0,0,0,0.15);" alt="졸업">
+        유치원 선생님이 되는 길
+      </h2>
       <div class="timeline" style="margin-top:40px;">
         <div class="step" style="background:#FFE5EC;">
           <span class="emo">🎓</span>
@@ -489,14 +515,14 @@
     <section data-background-color="#FFF8E7" style="text-align:center;">
       <h2 style="text-align:center; margin:0 0 2px 0; font-size:1.3em;">유치원 교사 브이로그<span class="time-badge" style="font-size:0.55em;">10분</span></h2>
       <p style="text-align:center; font-size:0.75em; color:#666; margin:0 0 8px 0;">📺 출근부터 퇴근까지, 진짜 하루</p>
-      <div style="max-width:800px; margin:0 auto;">
-        <div style="position:relative; padding-bottom:56.25%; height:0; border-radius:12px; overflow:hidden; box-shadow:0 6px 20px rgba(0,0,0,0.18);">
+      <div style="max-width:1100px; margin:0 auto;">
+        <div style="position:relative; padding-bottom:56.25%; height:0; border-radius:14px; overflow:hidden; box-shadow:0 8px 28px rgba(0,0,0,0.22);">
           <iframe src="https://www.youtube.com/embed/g9zFQmzWMRk"
                   style="position:absolute; top:0; left:0; width:100%; height:100%; border:0;"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowfullscreen></iframe>
         </div>
-        <div style="margin-top:8px; background:white; border-radius:10px; padding:8px 14px; box-shadow:0 2px 8px rgba(0,0,0,0.06); text-align:left;">
+        <div style="margin-top:6px; background:white; border-radius:8px; padding:6px 12px; box-shadow:0 2px 8px rgba(0,0,0,0.06); text-align:left;">
           <p style="margin:0 0 2px 0; font-size:0.38em;"><b>🔍 관찰 포인트</b></p>
           <p style="margin:0; font-size:0.33em; color:#555; line-height:1.5;">
             · 아이들 앞의 모습 vs 퇴근 후 교구 제작하는 모습<br>
@@ -511,14 +537,14 @@
     <section data-background-color="#FFF8E7" style="text-align:center;">
       <h2 style="text-align:center; margin:0 0 2px 0; font-size:1.3em;">유치원 교사의 진짜 이야기</h2>
       <p style="text-align:center; font-size:0.75em; color:#666; margin:0 0 8px 0;">🎤 현직 선생님이 들려주는 현장의 목소리</p>
-      <div style="max-width:800px; margin:0 auto;">
-        <div style="position:relative; padding-bottom:56.25%; height:0; border-radius:12px; overflow:hidden; box-shadow:0 6px 20px rgba(0,0,0,0.18);">
+      <div style="max-width:1100px; margin:0 auto;">
+        <div style="position:relative; padding-bottom:56.25%; height:0; border-radius:14px; overflow:hidden; box-shadow:0 8px 28px rgba(0,0,0,0.22);">
           <iframe src="https://www.youtube.com/embed/oA9yHCetjUw"
                   style="position:absolute; top:0; left:0; width:100%; height:100%; border:0;"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowfullscreen></iframe>
         </div>
-        <div style="margin-top:8px; background:white; border-radius:10px; padding:8px 14px; box-shadow:0 2px 8px rgba(0,0,0,0.06); text-align:left;">
+        <div style="margin-top:6px; background:white; border-radius:8px; padding:6px 12px; box-shadow:0 2px 8px rgba(0,0,0,0.06); text-align:left;">
           <p style="margin:0 0 2px 0; font-size:0.38em;"><b>💭 생각해 볼 점</b></p>
           <p style="margin:0; font-size:0.33em; color:#555; line-height:1.5;">
             · 선생님이 느끼는 가장 큰 보람은 무엇일까?<br>
@@ -532,7 +558,10 @@
     <!-- 체험: 안전 보안관 -->
     <section data-background-color="#FFE5EC">
       <span class="badge" style="background:var(--pink); color:white;">🎮 체험 활동</span>
-      <h2>위험을 찾아라!<br>안전 보안관 미션<span class="time-badge">10분</span></h2>
+      <h2 style="display:flex; align-items:center; gap:14px;">
+        <img src="https://loremflickr.com/120/120/kindergarten,classroom,safety?lock=101" style="width:54px; height:54px; border-radius:50%; object-fit:cover; box-shadow:0 4px 12px rgba(0,0,0,0.15);" alt="교실 안전">
+        위험을 찾아라! 안전 보안관 미션<span class="time-badge">10분</span>
+      </h2>
       <div class="two-col" style="margin-top:20px;">
         <div class="col-box">
           <h4>🎯 미션</h4>
@@ -557,42 +586,43 @@
     <section data-background-color="#FFF8E7">
       <span class="badge" style="background:var(--pink); color:white;">🔍 학생 활동지 · 안전 보안관</span>
       <h2 style="font-size:1.3em; margin-bottom:6px;">이 교실, 몇 개의 위험이 숨어있을까요?</h2>
-      <div style="display:grid; grid-template-columns: 1.3fr 1fr; gap:14px; margin-top:10px;">
-        <div style="background:white; border-radius:14px; padding:16px; box-shadow:0 4px 16px rgba(0,0,0,0.08); position:relative;">
-          <div style="font-size:0.7em; color:#888; margin-bottom:6px;">🏫 유치원 교실 풍경 (상상해보세요!)</div>
-          <div style="font-size:3.5em; line-height:1.1; text-align:center;">
+      <div style="display:grid; grid-template-columns: 1.1fr 1fr auto; gap:12px; margin-top:8px; align-items:start;">
+        <div style="background:white; border-radius:14px; padding:14px; box-shadow:0 4px 16px rgba(0,0,0,0.08);">
+          <div style="font-size:0.65em; color:#888; margin-bottom:4px;">🏫 유치원 교실 풍경</div>
+          <div style="font-size:2.8em; line-height:1.1; text-align:center;">
             🪑📚🧸&nbsp;🪟<br>
             🖍️✂️🔌&nbsp;💡<br>
             🧴🪣🪴&nbsp;🎨<br>
             🧩🎈🧻&nbsp;🪞
           </div>
-          <div style="font-size:0.55em; color:#888; margin-top:6px; text-align:center;">
-            (강사용: 실제 유치원 교실 사진으로 교체 가능)
+        </div>
+        <div style="background:white; border-radius:12px; padding:10px 14px; box-shadow:0 3px 12px rgba(0,0,0,0.08);">
+          <p style="margin:0 0 4px 0; font-size:0.75em; font-weight:700;">✍️ 체크리스트</p>
+          <div style="font-size:0.58em; line-height:1.8; color:#555;">
+            ☐ 뾰족한 모서리<br>
+            ☐ 작은 부품<br>
+            ☐ 늘어진 전선<br>
+            ☐ 콘센트<br>
+            ☐ 유리·거울<br>
+            ☐ 쓰러질 물건<br>
+            ☐ 기어오를 가구<br>
+            ☐ 뜨거운 물건
           </div>
         </div>
-        <div>
-          <div style="background:white; border-radius:12px; padding:12px 14px; box-shadow:0 3px 12px rgba(0,0,0,0.08);">
-            <p style="margin:0 0 6px 0; font-size:0.8em; font-weight:700;">✍️ 체크리스트</p>
-            <div style="font-size:0.65em; line-height:1.9; color:#555;">
-              ☐ 뾰족한 모서리 (책상·선반)<br>
-              ☐ 삼킬 수 있는 작은 부품<br>
-              ☐ 바닥에 늘어진 전선<br>
-              ☐ 손 닿는 높이의 콘센트<br>
-              ☐ 깨질 수 있는 유리·거울<br>
-              ☐ 쓰러질 수 있는 물건<br>
-              ☐ 기어오를 수 있는 가구<br>
-              ☐ 뜨거운 물건 (정수기 등)
-            </div>
-          </div>
-          <p style="text-align:center; font-size:0.7em; color:var(--pink); font-weight:700; margin-top:8px;">
-            🏆 많이 찾은 조가 우승!
-          </p>
+        <div style="background:white; padding:10px; border-radius:12px; box-shadow:0 4px 14px rgba(0,0,0,0.1); border:2px solid var(--pink); text-align:center;">
+          <p style="margin:0 0 4px 0; font-size:0.6em; font-weight:700; color:var(--pink);">📱 학생 참여</p>
+          <img class="qr-img" data-tab="safety" alt="학생 QR" style="display:block; width:130px; height:130px;">
+          <p style="margin:4px 0 0; font-size:0.5em; color:#888;">QR로 직접 체크!</p>
         </div>
       </div>
+      <p style="text-align:center; font-size:0.7em; color:var(--pink); font-weight:700; margin-top:6px;">
+        🏆 많이 찾은 조가 우승!
+      </p>
     </section>
 
     <!-- 2교시 커버 -->
     <section class="section-cover sc2">
+      <div class="cover-photo" style="background-image:url('https://loremflickr.com/1600/900/teacher,storytelling,kids?lock=51');"></div>
       <div class="big-num">02</div>
       <h1>아이들의 마음을 여는<br>'마법사'</h1>
       <p style="font-size:1.2em; margin-top:20px;">유아 소통법과 창의적 교구 활용</p>
@@ -601,7 +631,10 @@
     <!-- 눈높이 대화법 -->
     <section data-background-color="#E7F0FF">
       <span class="badge" style="background:var(--blue); color:white;">소통의 기술</span>
-      <h2>눈높이 대화법 🎭</h2>
+      <h2 style="display:flex; align-items:center; gap:14px;">
+        <img src="https://loremflickr.com/120/120/teacher,child,talking?lock=61" style="width:54px; height:54px; border-radius:50%; object-fit:cover; box-shadow:0 4px 12px rgba(0,0,0,0.15);" alt="눈높이 대화">
+        눈높이 대화법 🎭
+      </h2>
       <div class="two-col" style="margin-top:20px;">
         <div class="col-box">
           <h4>❌ 이렇게 말하면</h4>
@@ -719,7 +752,13 @@
     <!-- 학생용: 연습 체크리스트 -->
     <section data-background-color="#FFF0F5">
       <span class="badge" style="background:var(--pink); color:white;">📝 학생 활동지 · 연습 가이드</span>
-      <h2 style="font-size:1.3em; margin-bottom:8px;">10분 안에 완성하는 우리 조 대본</h2>
+      <h2 style="font-size:1.3em; margin-bottom:8px; display:flex; align-items:center; gap:14px;">
+        10분 안에 완성하는 우리 조 대본
+        <span style="margin-left:auto; background:white; padding:6px; border-radius:10px; box-shadow:0 3px 12px rgba(0,0,0,0.1); border:2px solid var(--pink); text-align:center;">
+          <img class="qr-img" data-tab="story" alt="학생 QR" style="display:block; width:90px; height:90px;">
+          <p style="margin:2px 0 0; font-size:0.4em; color:#888;">📱 동화뽑기·타이머</p>
+        </span>
+      </h2>
       <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
         <div style="background:white; border-radius:12px; padding:14px 16px; box-shadow:0 3px 12px rgba(0,0,0,0.08);">
           <p style="margin:0 0 6px 0; font-size:0.9em; font-weight:700; color:var(--pink);">⏱️ 시간표</p>
@@ -762,7 +801,13 @@
     <!-- Q&A -->
     <section data-background-color="#FFF8E7">
       <span class="badge" style="background:var(--yellow);">🙋 솔직한 Q&amp;A</span>
-      <h2 style="font-size:1.3em;">자주 묻는 질문 <span style="font-size:0.55em; color:#888; font-weight:500;">(질문을 눌러보세요 👆)</span></h2>
+      <h2 style="font-size:1.3em; display:flex; align-items:center; gap:14px;">
+        자주 묻는 질문 <span style="font-size:0.55em; color:#888; font-weight:500;">(질문을 눌러보세요 👆)</span>
+        <span style="margin-left:auto; background:white; padding:6px; border-radius:10px; box-shadow:0 3px 12px rgba(0,0,0,0.1); border:2px solid var(--mint); text-align:center;">
+          <img class="qr-img" data-tab="qa" alt="질문 QR" style="display:block; width:80px; height:80px;">
+          <p style="margin:2px 0 0; font-size:0.4em; color:#888;">📱 직접 질문</p>
+        </span>
+      </h2>
       <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-top:6px;">
         <details class="qa-toggle"><summary>Q. 남자 유치원 선생님도 있나요?</summary><div class="a-box">점점 늘고 있어요! 큰 신체놀이, 다른 시선 등 남자 선생님만의 강점이 있어 환영받는 추세입니다.</div></details>
         <details class="qa-toggle"><summary>Q. 피아노를 못 치면 할 수 없나요?</summary><div class="a-box">필수는 아니에요. 요즘은 음원·미디어를 많이 활용해요. 대학 가서 배워도 충분합니다.</div></details>
@@ -781,6 +826,7 @@
 
     <!-- 마무리 메시지 -->
     <section class="section-cover" data-background-gradient="linear-gradient(135deg, #FFB6C1, #B088F9)">
+      <div class="cover-photo" style="background-image:url('https://loremflickr.com/1600/900/teacher,child,hug,love?lock=71'); opacity:0.25;"></div>
       <div class="quote" style="font-size:2em;">
         누군가의 인생에서<br>
         <u>첫 번째 스승</u>이 된다는 것
@@ -817,14 +863,14 @@
     maxScale: 2.0,
   });
 
-  // 학생 페이지 QR 코드 동적 생성 (현재 도메인 기준)
+  // 학생 페이지 QR 코드 동적 생성 (각 활동별 탭 딥링크)
   (function(){
-    const studentUrl = new URL('student.html', window.location.href).href;
-    const qrSrc = 'https://api.qrserver.com/v1/create-qr-code/?size=400x400&margin=8&data=' + encodeURIComponent(studentUrl);
-    const img = document.getElementById('qr-img');
-    const urlEl = document.getElementById('qr-url');
-    if (img) img.src = qrSrc;
-    if (urlEl) urlEl.textContent = studentUrl;
+    const baseUrl = new URL('student.html', window.location.href).href;
+    document.querySelectorAll('img.qr-img').forEach(img => {
+      const tab = img.dataset.tab || '';
+      const url = tab ? baseUrl + '#' + tab : baseUrl;
+      img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=6&data=' + encodeURIComponent(url);
+    });
   })();
 </script>
 </body>
