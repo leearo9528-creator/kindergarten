@@ -305,6 +305,64 @@
   .section-cover { position: relative; overflow: hidden; }
   .section-cover > * { position: relative; z-index: 1; }
 
+  /* Empathy Quiz */
+  .quiz-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+    overflow: hidden;
+    border-top: 4px solid var(--blue);
+  }
+  .quiz-card.done { border-top-color: var(--mint); background: linear-gradient(180deg, #F4FBF4, white); }
+  .quiz-card summary {
+    list-style: none;
+    padding: 10px 14px;
+    cursor: pointer;
+    font-size: 0.75em;
+    font-weight: 700;
+    color: var(--dark);
+    line-height: 1.4;
+    position: relative;
+    padding-right: 30px;
+  }
+  .quiz-card summary::-webkit-details-marker { display: none; }
+  .quiz-card summary::after {
+    content: '+';
+    position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+    font-size: 1.3em; color: var(--blue); font-weight: 900;
+  }
+  .quiz-card[open] summary::after { content: '−'; }
+  .quiz-card.done summary::after { content: '✓'; color: var(--mint); }
+  .quiz-card .qn { color: var(--blue); margin-right: 4px; }
+  .quiz-card.done .qn { color: var(--mint); }
+  .quiz-card .options { padding: 0 14px 12px; display: grid; gap: 6px; }
+  .quiz-card .opt {
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: #F5F7FA;
+    font-size: 0.65em;
+    line-height: 1.4;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.2s;
+  }
+  .quiz-card .opt:hover { background: #E7F0FF; }
+  .quiz-card .opt.correct { background: #E8F8E8; border-color: var(--mint); color: #2E8B57; font-weight: 700; }
+  .quiz-card .opt.wrong { background: #FFE5E5; border-color: #FFB3B3; color: #C0392B; }
+  .quiz-card .opt.disabled { pointer-events: none; }
+  .quiz-card .why {
+    margin-top: 8px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    background: #FFF8E7;
+    font-size: 0.6em;
+    line-height: 1.5;
+    color: #555;
+    border-left: 3px solid var(--yellow);
+    display: none;
+  }
+  .quiz-card.answered .why { display: block; animation: fadeIn 0.3s; }
+
   /* title slide photo */
   .title-photo-wrap {
     width: 240px;
@@ -627,6 +685,19 @@
       </div>
     </section>
 
+    <!-- 공감 퀴즈 -->
+    <section data-background-color="#E7F0FF">
+      <span class="badge" style="background:var(--blue); color:white;">🧠 공감 퀴즈</span>
+      <h2 style="font-size:1.4em; margin-bottom:4px;">이런 상황, 올바른 대답은?</h2>
+      <p style="font-size:0.7em; color:#666; margin:0 0 8px 0;">상황을 눌러 선택지를 확인하고, 답을 골라보세요 <span id="q-progress" style="font-weight:700; color:var(--blue);">0/7</span></p>
+
+      <div id="empathy-quiz" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;"></div>
+
+      <div id="quiz-done" style="display:none; margin-top:10px; padding:12px; border-radius:12px; background:linear-gradient(135deg,#E8F8E8,#FFF8E7); border:2px dashed var(--mint); text-align:center;">
+        <b style="font-size:0.95em;">🎉 모두 완료! 아이의 감정을 먼저 읽는 것이 공감의 시작이에요.</b>
+      </div>
+    </section>
+
     <!-- 체험: 구연동화왕 -->
     <section data-background-color="#FFF0F5">
       <span class="badge" style="background:var(--pink); color:white;">🎤 메인 체험</span>
@@ -809,6 +880,114 @@
     minScale: 0.2,
     maxScale: 2.0,
   });
+
+  // 공감 퀴즈 데이터
+  const empathyQuiz = [
+    {
+      q: '친구가 장난감을 빼앗아가서 아이가 엉엉 울고 있어요.',
+      opts: [
+        { t: '"울지 마, 뚝 그쳐!"', ok: false },
+        { t: '"장난감을 뺏겨서 많이 속상했구나."', ok: true },
+        { t: '"그 친구한테 똑같이 해버려."', ok: false }
+      ],
+      why: '💡 감정을 먼저 읽어주는 것이 공감의 시작. 아이는 "알아주는 것"만으로도 진정돼요.'
+    },
+    {
+      q: '등원 첫날, 아이가 "엄마 보고 싶어..." 하며 훌쩍여요.',
+      opts: [
+        { t: '"엄마 이따 오셔, 울지 마."', ok: false },
+        { t: '"엄마가 많이 보고 싶구나. 선생님이 안아줄까?"', ok: true },
+        { t: '"다 큰 아이가 울면 안 되지."', ok: false }
+      ],
+      why: '💡 감정을 부정하지 말고 이름을 붙여 주세요. "보고 싶은 마음" 자체를 인정받으면 진정돼요.'
+    },
+    {
+      q: '화가 나서 친구를 때린 아이에게 뭐라고 할까요?',
+      opts: [
+        { t: '"왜 때렸어! 너도 맞아볼래?"', ok: false },
+        { t: '"친구 때리면 안 돼! 구석에 가 있어."', ok: false },
+        { t: '"화가 많이 났구나. 그래도 친구를 때리면 아파. 말로 해볼까?"', ok: true }
+      ],
+      why: '💡 감정(화남)은 받아주고, 행동(때리기)은 분리해서 가르치기. "감정 OK, 행동은 NO".'
+    },
+    {
+      q: '그림을 자랑스럽게 들고 오는 아이에게 어떻게 반응할까요?',
+      opts: [
+        { t: '"와~ 최고! 너는 천재야!"', ok: false },
+        { t: '"여기 빨간색 선이 진짜 힘차네. 어떻게 그린 거야?"', ok: true },
+        { t: '"응, 잘 그렸네." (다른 일 하면서)', ok: false }
+      ],
+      why: '💡 결과("최고!") 칭찬보다 과정·구체적인 부분을 짚어주면 아이가 더 주도적으로 성장해요.'
+    },
+    {
+      q: '밥을 먹기 싫다며 고개를 젓는 아이, 뭐라고 할까요?',
+      opts: [
+        { t: '"다 먹을 때까지 자리에서 못 일어나."', ok: false },
+        { t: '"한 숟가락만 같이 먹어볼까? 선택지를 줄게."', ok: true },
+        { t: '"그래, 그럼 먹지 마."', ok: false }
+      ],
+      why: '💡 강요하지도, 방치하지도 않기. 아이가 "선택했다"는 느낌을 주면 협조하게 돼요.'
+    },
+    {
+      q: '실수로 우유를 바닥에 쏟은 아이가 당황한 표정이에요.',
+      opts: [
+        { t: '"어머! 왜 그랬어! 얼른 치워!"', ok: false },
+        { t: '"괜찮아, 실수할 수 있어. 같이 닦아볼까?"', ok: true },
+        { t: '(한숨) "너는 매번 왜 이래..."', ok: false }
+      ],
+      why: '💡 실수를 용납받은 아이가 도전을 계속해요. 다음엔 "조심해서 마시자"로 배움까지 연결.'
+    },
+    {
+      q: '"선생님, 나 이거 못해요..." 하며 주저앉는 아이에게는?',
+      opts: [
+        { t: '"안 되긴! 해보기나 했어?"', ok: false },
+        { t: '"어려워 보이는구나. 어디까지 해봤어?"', ok: true },
+        { t: '"그래, 선생님이 대신 해줄게."', ok: false }
+      ],
+      why: '💡 감정 인정 → 현재 지점 파악 → 작은 단서 주기 순. 대신 해주면 성취감도 함께 사라져요.'
+    }
+  ];
+
+  (function(){
+    const root = document.getElementById('empathy-quiz');
+    if (!root) return;
+    let done = 0;
+    const progEl = document.getElementById('q-progress');
+    const doneEl = document.getElementById('quiz-done');
+    empathyQuiz.forEach((q, i) => {
+      const d = document.createElement('details');
+      d.className = 'quiz-card';
+      d.innerHTML = `
+        <summary><span class="qn">Q${i+1}.</span>${q.q}</summary>
+        <div class="options">
+          ${q.opts.map((o, j) => `<div class="opt" data-ok="${o.ok}">${o.t}</div>`).join('')}
+          <div class="why">${q.why}</div>
+        </div>
+      `;
+      root.appendChild(d);
+      d.querySelectorAll('.opt').forEach(o => {
+        o.addEventListener('click', () => {
+          if (d.classList.contains('answered')) return;
+          d.classList.add('answered');
+          d.querySelectorAll('.opt').forEach(x => x.classList.add('disabled'));
+          if (o.dataset.ok === 'true') {
+            o.classList.add('correct');
+            d.classList.add('done');
+            done++;
+            progEl.textContent = done + '/7';
+            if (done === 7) doneEl.style.display = 'block';
+          } else {
+            o.classList.add('wrong');
+            d.querySelectorAll('.opt').forEach(x => { if (x.dataset.ok === 'true') x.classList.add('correct'); });
+            d.classList.add('done');
+            done++;
+            progEl.textContent = done + '/7';
+            if (done === 7) doneEl.style.display = 'block';
+          }
+        });
+      });
+    });
+  })();
 
   // 학생 페이지 QR 코드 동적 생성 (각 활동별 탭 딥링크)
   (function(){
