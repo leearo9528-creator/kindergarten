@@ -169,17 +169,57 @@
   .story-card {
     background: white;
     border-radius: 18px;
-    padding: 22px 18px;
-    text-align: center;
+    padding: 20px 16px;
     box-shadow: 0 8px 28px rgba(255,143,177,0.3);
     border: 3px solid var(--pink);
     width: 100%;
     transition: transform 0.4s;
   }
   .story-card.flipping { transform: rotateY(90deg); }
-  .story-card .big-emoji { font-size: 48px; display: block; margin-bottom: 8px; }
-  .story-card h3 { margin:0 0 6px; font-size: 18px; }
-  .story-card .hint { font-size: 12px; color:#666; line-height:1.6; }
+  .story-card .big-emoji { font-size: 42px; display: block; text-align:center; margin-bottom: 4px; }
+  .story-card h3 { margin:0 0 8px; font-size: 17px; text-align:center; }
+
+  .script-box {
+    background: linear-gradient(180deg, #FFFBF0, #FFF6E0);
+    border-radius: 12px;
+    padding: 14px;
+    margin-top: 10px;
+    border-left: 4px solid var(--yellow);
+    font-size: 13px;
+    line-height: 1.7;
+    max-height: 260px;
+    overflow-y: auto;
+  }
+  .script-box .scene-tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 8px;
+    background: var(--yellow);
+    border-radius: 10px;
+    margin-bottom: 8px;
+  }
+  .script-box .line { margin: 6px 0; }
+  .script-box .role {
+    display: inline-block;
+    font-weight: 800;
+    padding: 1px 8px;
+    border-radius: 8px;
+    margin-right: 4px;
+    font-size: 11px;
+  }
+  .script-box .narr { background: #E7F0FF; color: var(--blue); }
+  .script-box .a { background: #FFE5EC; color: #D63384; }
+  .script-box .b { background: #E8F8E8; color: #2E8B57; }
+  .script-box .c { background: #FFF3CD; color: #B8860B; }
+  .script-box .act { color: #888; font-style: italic; font-size: 11.5px; }
+  .script-box .hint-row {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed #ddd;
+    font-size: 11.5px;
+    color:#666;
+  }
 
   .btn {
     width: 100%;
@@ -592,25 +632,162 @@
 
   renderStage(0);
 
-  // Story cards
+  // Story cards with scripts
   const stories = [
-    {emoji:'🐺🐷🐷🐷', title:'아기돼지 삼형제', hint:'늑대의 "후~!" / 돼지들의 비명 / 내레이터'},
-    {emoji:'🐢🐰', title:'토끼와 거북이', hint:'잘난 척하는 토끼 / 꾸준한 거북이 / 응원하는 동물들'},
-    {emoji:'👧🐺🧺', title:'빨간 모자', hint:'"할머니, 눈이 왜 이렇게 커요?" 장면'},
-    {emoji:'🌞🌙🐯', title:'해님 달님', hint:'호랑이 쫓기는 장면 / 동아줄 내려오는 순간'},
-    {emoji:'🐜🦗', title:'개미와 베짱이', hint:'노래하는 베짱이 / 땀 흘리는 개미'},
-    {emoji:'🦊🍇', title:'여우와 신포도', hint:'점프하는 여우 / "흥! 저건 신포도야"'},
-    {emoji:'👦🌱', title:'잭과 콩나무', hint:'콩나무가 쑥쑥 자라는 장면 / 거인의 목소리'},
-    {emoji:'🐭🐭🐭', title:'시골 쥐 서울 쥐', hint:'서울 쥐의 자랑 / 무서운 고양이 등장'},
-    {emoji:'👵🌰', title:'혹부리 영감', hint:'노래하는 할아버지 / 도깨비와의 만남'},
-    {emoji:'🐇🌕', title:'달 토끼 이야기', hint:'방아 찧는 토끼 / 구름 위 장면'}
+    {
+      emoji:'🐺🐷🐷🐷', title:'아기돼지 삼형제',
+      scene:'🎬 늑대가 셋째 돼지 집 앞에 나타난 장면',
+      lines:[
+        {r:'narr', t:'늑대가 셋째 돼지의 벽돌집 앞에 서서 씩씩거렸어요.'},
+        {r:'a', name:'늑대', t:'(문을 쾅쾅!) "아기 돼지야, 문 좀 열어라~!"'},
+        {r:'b', name:'돼지', t:'"싫어! 절대 안 열어줄 거야!"'},
+        {r:'a', name:'늑대', t:'"좋아! 그럼 내가 후~! 불어서 날려버리겠다!"'},
+        {r:'act', t:'(늑대가 "후~~~~!" 하고 힘껏 분다)'},
+        {r:'narr', t:'하지만 벽돌집은 꼼짝도 하지 않았답니다!'}
+      ],
+      hint:'🗣️ 늑대는 거칠고 낮은 목소리 / 돼지는 떨리지만 당차게'
+    },
+    {
+      emoji:'🐢🐰', title:'토끼와 거북이',
+      scene:'🎬 경주 시작 전, 두 동물의 다툼',
+      lines:[
+        {r:'a', name:'토끼', t:'"하하! 거북아, 네가 나를 이길 수 있다고?"'},
+        {r:'b', name:'거북', t:'"꾸준히 가면 이길 수 있어."'},
+        {r:'a', name:'토끼', t:'"웃기시네~ 좋아, 저 언덕까지 경주해보자!"'},
+        {r:'narr', t:'땅! 출발 신호와 함께 토끼는 쌩~ 달려 사라졌어요.'},
+        {r:'act', t:'(토끼가 "어차피 난 빠르니까 잠깐 자자~" 하고 낮잠에 빠진다)'},
+        {r:'b', name:'거북', t:'(천천히 한 걸음씩) "한 걸음, 또 한 걸음..."'}
+      ],
+      hint:'🗣️ 토끼는 빠르고 잘난 척 / 거북이는 느리고 진지하게'
+    },
+    {
+      emoji:'👧🐺🧺', title:'빨간 모자',
+      scene:'🎬 할머니 침대에서의 대화',
+      lines:[
+        {r:'a', name:'빨간모자', t:'"할머니~ 저 왔어요!"'},
+        {r:'b', name:'늑대', t:'(이불 뒤집어쓰고) "오냐~ 어서 오너라, 아가야..."'},
+        {r:'a', name:'빨간모자', t:'"할머니, 눈이 왜 이렇게 커요?"'},
+        {r:'b', name:'늑대', t:'"너를 더 잘 보려고 그런단다~"'},
+        {r:'a', name:'빨간모자', t:'"그럼 이빨은 왜 이렇게 커요?"'},
+        {r:'b', name:'늑대', t:'(벌떡!) "너를 잡아먹으려고 그런단다! 으르렁!"'}
+      ],
+      hint:'🗣️ 빨간모자는 순진하게 / 늑대는 처음엔 상냥, 마지막엔 무섭게'
+    },
+    {
+      emoji:'🌞🌙🐯', title:'해님 달님',
+      scene:'🎬 호랑이가 오누이를 쫓는 장면',
+      lines:[
+        {r:'narr', t:'오누이는 나무 위로 올라가 숨었어요. 그런데 호랑이가 찾아냈어요!'},
+        {r:'c', name:'호랑이', t:'(으르렁) "너희들, 어떻게 올라갔느냐?"'},
+        {r:'a', name:'오빠', t:'"참기름을 바르고 올라왔지롱~!"'},
+        {r:'act', t:'(호랑이가 참기름을 바르자 쭉~ 미끄러진다)'},
+        {r:'b', name:'동생', t:'(울먹) "하느님, 저희를 살려주세요!"'},
+        {r:'narr', t:'하늘에서 튼튼한 동아줄이 스르륵 내려왔답니다!'}
+      ],
+      hint:'🗣️ 호랑이는 무섭게 / 오누이는 다급하고 간절하게'
+    },
+    {
+      emoji:'🐜🦗', title:'개미와 베짱이',
+      scene:'🎬 더운 여름날, 개미와 베짱이의 만남',
+      lines:[
+        {r:'narr', t:'뜨거운 여름, 개미는 땀을 뻘뻘 흘리며 먹이를 옮겼어요.'},
+        {r:'b', name:'베짱이', t:'(기타 치듯) "라라라~ 개미야, 너는 뭐하러 그렇게 일해?"'},
+        {r:'a', name:'개미', t:'(헉헉) "겨울에 먹을 양식을 모아야 해."'},
+        {r:'b', name:'베짱이', t:'"겨울? 그건 나중 일이야~ 같이 놀자!"'},
+        {r:'narr', t:'시간이 흘러 추운 겨울이 왔어요. 베짱이는 배가 고파 개미네 집 문을 두드렸답니다.'}
+      ],
+      hint:'🗣️ 개미는 힘들지만 씩씩 / 베짱이는 신나고 여유롭게'
+    },
+    {
+      emoji:'🦊🍇', title:'여우와 신포도',
+      scene:'🎬 여우가 높이 달린 포도를 따려는 장면',
+      lines:[
+        {r:'narr', t:'배고픈 여우가 포도나무 아래 서 있었어요.'},
+        {r:'a', name:'여우', t:'"우와~ 저 포도 진짜 맛있어 보이네!"'},
+        {r:'act', t:'(여우가 팔짝! 팔짝! 점프하지만 닿지 않는다)'},
+        {r:'a', name:'여우', t:'(씩씩) "영차! 영차!" ...(철퍼덕)'},
+        {r:'a', name:'여우', t:'(툭툭 털며) "흥! 어차피 저건 신포도일 거야!"'},
+        {r:'narr', t:'여우는 발길을 돌려 휙~ 가버렸답니다.'}
+      ],
+      hint:'🗣️ 점프할 때 "영차!" / 포기할 때 "흥!" 자신감 있게'
+    },
+    {
+      emoji:'👦🌱', title:'잭과 콩나무',
+      scene:'🎬 구름 위 거인의 성에 숨어든 잭',
+      lines:[
+        {r:'narr', t:'잭은 거인의 성 식탁 아래에 숨어있었어요.'},
+        {r:'c', name:'거인', t:'(쿵! 쿵!) "음...사람 냄새가 나는걸?"'},
+        {r:'c', name:'거인', t:'"피-파이-포-펌~! 어디 있느냐!"'},
+        {r:'a', name:'잭', t:'(속삭) "들키면 안 돼... 들키면 안 돼..."'},
+        {r:'act', t:'(거인이 황금알 낳는 거위와 함께 잠든다. 드르렁~)'},
+        {r:'a', name:'잭', t:'"지금이야! 살금살금..."'}
+      ],
+      hint:'🗣️ 거인은 굵고 크게 / 잭은 아주 작고 조심스럽게'
+    },
+    {
+      emoji:'👵🌰', title:'혹부리 영감',
+      scene:'🎬 산속에서 도깨비를 만난 장면',
+      lines:[
+        {r:'narr', t:'할아버지는 산에서 길을 잃고 빈 집에 들어가 노래를 불렀어요.'},
+        {r:'a', name:'할아버지', t:'(흥얼) "달달달~ 랄랄라~"'},
+        {r:'act', t:'(쾅! 도깨비들이 몰려온다)'},
+        {r:'c', name:'도깨비', t:'"이 노래, 어디서 나오는 거냐!"'},
+        {r:'a', name:'할아버지', t:'(얼떨결에) "이, 이 혹에서 나옵니다!"'},
+        {r:'c', name:'도깨비', t:'"그럼 그 혹을 우리가 사겠다! 금덩이랑 바꾸자!"'}
+      ],
+      hint:'🗣️ 할아버지는 떨면서 / 도깨비는 우렁차고 익살스럽게'
+    },
+    {
+      emoji:'🐭🏙️', title:'시골 쥐와 서울 쥐',
+      scene:'🎬 서울 쥐의 집을 방문한 시골 쥐',
+      lines:[
+        {r:'b', name:'서울쥐', t:'(우쭐) "자, 여기가 내 집이야! 멋지지?"'},
+        {r:'a', name:'시골쥐', t:'(놀람) "우와~ 치즈가 이렇게 많아?!"'},
+        {r:'act', t:'(갑자기 "야옹~!" 고양이가 나타난다)'},
+        {r:'a', name:'시골쥐', t:'(비명) "으악! 도망쳐!"'},
+        {r:'b', name:'서울쥐', t:'(헉헉) "이, 이게 우리 일상이야..."'},
+        {r:'a', name:'시골쥐', t:'"난 시골로 돌아갈래. 조용한 게 최고야!"'}
+      ],
+      hint:'🗣️ 서울쥐는 자랑스럽게 / 시골쥐는 순박하고 놀라움 가득'
+    },
+    {
+      emoji:'🐇🌕', title:'달 토끼 이야기',
+      scene:'🎬 달에 올라간 토끼의 첫날 밤',
+      lines:[
+        {r:'narr', t:'착한 토끼는 신선의 축복으로 달나라에 올라갔어요.'},
+        {r:'a', name:'토끼', t:'(두리번) "우와~ 여기가 달이구나!"'},
+        {r:'b', name:'별', t:'(반짝반짝) "토끼야, 떡방아를 찧어줘~"'},
+        {r:'act', t:'(토끼가 절구를 쿵덕쿵덕 찧는다)'},
+        {r:'a', name:'토끼', t:'"쿵덕! 쿵덕! 맛있는 떡이 나와라~"'},
+        {r:'narr', t:'보름달 속의 토끼는 지금도 떡방아를 찧고 있대요.'}
+      ],
+      hint:'🗣️ 토끼는 호기심 많게 / "쿵덕쿵덕" 리듬감 있게'
+    }
   ];
   const storyCard = document.getElementById('story-card');
+
+  function renderScript(s){
+    const body = s.lines.map(l => {
+      if (l.r === 'narr') return `<div class="line"><span class="role narr">내레이터</span>${l.t}</div>`;
+      if (l.r === 'act') return `<div class="line act">${l.t}</div>`;
+      return `<div class="line"><span class="role ${l.r}">${l.name}</span>${l.t}</div>`;
+    }).join('');
+    return `
+      <span class="big-emoji">${s.emoji}</span>
+      <h3>${s.title}</h3>
+      <div class="script-box">
+        <span class="scene-tag">${s.scene}</span>
+        ${body}
+        <div class="hint-row">${s.hint}</div>
+      </div>
+    `;
+  }
+
   document.getElementById('draw-btn').addEventListener('click', () => {
     storyCard.classList.add('flipping');
     setTimeout(() => {
       const s = stories[Math.floor(Math.random()*stories.length)];
-      storyCard.innerHTML = `<span class="big-emoji">${s.emoji}</span><h3>${s.title}</h3><div class="hint">${s.hint}</div>`;
+      storyCard.innerHTML = renderScript(s);
       storyCard.classList.remove('flipping');
     }, 200);
   });
