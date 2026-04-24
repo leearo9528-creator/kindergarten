@@ -310,6 +310,7 @@
 <div class="tabs" id="tabs">
   <div class="tab active" data-tab="safety">🔍 안전 보안관</div>
   <div class="tab" data-tab="story">🎭 구연동화왕</div>
+  <div class="tab" data-tab="aptitude">🧭 적성 검사</div>
   <div class="tab" data-tab="qa">🙋 질문 남기기</div>
 </div>
 
@@ -376,6 +377,40 @@
       <div class="check-row" data-c="v3"><div class="mini-chk">✓</div><div class="lbl">추임새("우와~", "어머나!")가 있다</div></div>
       <div class="check-row" data-c="v4"><div class="mini-chk">✓</div><div class="lbl">1분 안에 끝난다</div></div>
       <div class="check-row" data-c="v5"><div class="mini-chk">✓</div><div class="lbl">5살이 들어도 이해된다</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Aptitude Test Panel -->
+<div class="panel" id="panel-aptitude">
+  <div class="card">
+    <span class="badge-tag">🧭 자가 진단</span>
+    <h2>나는 유치원 교사에 얼마나 잘 맞을까?</h2>
+    <p>10문항에 솔직하게 답해보세요. 즉시 나의 성향 유형이 나와요!</p>
+    <div class="progress" style="margin-top:10px;"><div class="bar" id="apt-bar"></div></div>
+    <div style="font-size:12px; color:#888; text-align:right; margin-top:4px;"><span id="apt-count">0</span> / 10</div>
+  </div>
+
+  <div class="card" id="apt-question-card">
+    <div style="font-size:12px; color:var(--pink); font-weight:700; margin-bottom:6px;">Q<span id="apt-idx">1</span> / 10</div>
+    <h3 id="apt-q" style="font-size:15px; margin:0 0 12px; line-height:1.5;"></h3>
+    <div style="display:grid; gap:6px;">
+      <button class="btn" data-score="5" style="background:linear-gradient(135deg,#6BCB77,#A8E6A3); box-shadow:0 3px 10px rgba(107,203,119,0.3);">😀 매우 그렇다</button>
+      <button class="btn" data-score="4" style="background:linear-gradient(135deg,#A8E6A3,#D4F1D4); color:#2E8B57; box-shadow:0 3px 10px rgba(107,203,119,0.2);">🙂 그렇다</button>
+      <button class="btn ghost" data-score="3">😐 보통</button>
+      <button class="btn" data-score="2" style="background:linear-gradient(135deg,#FFDBB4,#FFC8A2); color:#B8860B;">😕 별로</button>
+      <button class="btn" data-score="1" style="background:linear-gradient(135deg,#FFB3B3,#FF9999); color:#C0392B;">🙁 전혀 아니다</button>
+    </div>
+  </div>
+
+  <div class="card" id="apt-result" style="display:none;">
+    <div style="text-align:center;">
+      <div id="apt-type-emoji" style="font-size:52px;">🌟</div>
+      <h2 id="apt-type-title" style="margin:4px 0;">당신은 …</h2>
+      <div id="apt-score-line" style="font-size:14px; color:#888; margin-bottom:10px;"></div>
+      <p id="apt-type-desc" style="font-size:13px; line-height:1.7; color:#555; text-align:left;"></p>
+      <div id="apt-advice" style="margin-top:12px; padding:12px; border-radius:12px; background:#FFF8E7; border-left:4px solid var(--yellow); font-size:12.5px; text-align:left; line-height:1.6; color:#555;"></div>
+      <button class="btn" id="apt-restart" style="margin-top:14px;">↺ 다시 해보기</button>
     </div>
   </div>
 </div>
@@ -814,6 +849,85 @@
   document.querySelectorAll('.check-row[data-c]').forEach(r => {
     r.addEventListener('click', () => r.classList.toggle('on'));
   });
+
+  // ========== Aptitude Test ==========
+  const aptQuestions = [
+    '어린 아이와 눈높이를 맞추고 놀아주는 것이 즐겁다.',
+    '같은 질문을 여러 번 받아도 짜증 내지 않고 답해줄 수 있다.',
+    '감정이 격해져도 금세 다시 평정을 되찾을 수 있다.',
+    '종이 한 장이나 돌멩이로도 새로운 놀이를 만들어낼 수 있다.',
+    '하루 종일 서 있거나 뛰어다녀도 체력적으로 버틸 수 있다.',
+    '상대방의 표정만 봐도 기분을 어느 정도 알아챈다.',
+    '예상치 못한 상황이 벌어져도 당황하지 않고 대응하는 편이다.',
+    '노래·그림·몸짓 중 최소 하나는 즐겁게 할 수 있다.',
+    '남이 잘한 것을 진심으로 칭찬해 주는 게 어렵지 않다.',
+    '어린 아이의 눈물 앞에서 함께 마음이 아프고 안아주고 싶다.'
+  ];
+
+  const aptTypes = [
+    {
+      min: 42, emoji: '🌟', title: '천생 교사형',
+      desc: '아이들을 향한 진심과 체력, 창의성이 모두 갖춰진 타입. 지금 이 자질을 꾸준히 쌓는다면, 한 아이의 세계를 설계하는 멋진 선생님이 될 수 있어요.',
+      advice: '추천 준비: 독서(그림책)·봉사(아동센터)·피아노/미술 경험. 중학교 때부터 아이와 접할 기회를 늘려보세요.'
+    },
+    {
+      min: 30, emoji: '🌱', title: '성장 잠재형',
+      desc: '기본 자질은 있지만 아직 스스로의 강점을 발견 중인 상태. 체험과 관찰을 통해 교사 적성이 빠르게 자랄 수 있는 유형이에요.',
+      advice: '추천 준비: 아이들과 만나는 활동(캠프·봉사)에 자주 참여해보세요. "좋아하는지/지치지 않는지"가 가장 큰 단서예요.'
+    },
+    {
+      min: 0, emoji: '🎨', title: '탐색형',
+      desc: '아직은 유치원 교사보다 다른 진로가 더 잘 맞을 수도 있어요. 하지만 오늘의 답이 내일의 답은 아니에요. 다양한 직업을 더 탐색해보세요.',
+      advice: '추천 준비: 교육 관련 다른 직업도 살펴보기 (초등교사·상담교사·교구 디자이너 등). 나의 "빛나는 순간"을 관찰해보세요.'
+    }
+  ];
+
+  let aptIdx = 0;
+  let aptScores = [];
+  const aptQEl = document.getElementById('apt-q');
+  const aptIdxEl = document.getElementById('apt-idx');
+  const aptBarEl = document.getElementById('apt-bar');
+  const aptCountEl = document.getElementById('apt-count');
+  const aptQCard = document.getElementById('apt-question-card');
+  const aptResult = document.getElementById('apt-result');
+
+  function renderApt() {
+    aptQEl.textContent = aptQuestions[aptIdx];
+    aptIdxEl.textContent = aptIdx + 1;
+    aptBarEl.style.width = (aptIdx / aptQuestions.length * 100) + '%';
+    aptCountEl.textContent = aptIdx;
+  }
+  function showAptResult() {
+    const total = aptScores.reduce((a,b)=>a+b, 0);
+    const type = aptTypes.find(t => total >= t.min);
+    aptQCard.style.display = 'none';
+    aptResult.style.display = 'block';
+    document.getElementById('apt-type-emoji').textContent = type.emoji;
+    document.getElementById('apt-type-title').textContent = type.title;
+    document.getElementById('apt-score-line').textContent = `점수: ${total} / 50`;
+    document.getElementById('apt-type-desc').textContent = type.desc;
+    document.getElementById('apt-advice').textContent = '💡 ' + type.advice;
+    aptBarEl.style.width = '100%';
+    aptCountEl.textContent = '10';
+  }
+  document.querySelectorAll('#apt-question-card .btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      aptScores.push(parseInt(btn.dataset.score));
+      aptIdx++;
+      if (aptIdx >= aptQuestions.length) {
+        showAptResult();
+      } else {
+        renderApt();
+      }
+    });
+  });
+  document.getElementById('apt-restart').addEventListener('click', () => {
+    aptIdx = 0; aptScores = [];
+    aptQCard.style.display = '';
+    aptResult.style.display = 'none';
+    renderApt();
+  });
+  renderApt();
 
   // Q submission (localStorage)
   const myQs = document.getElementById('my-qs');
