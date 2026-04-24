@@ -359,7 +359,6 @@
   <div class="tab" data-tab="empathy">🧠 공감 퀴즈</div>
   <div class="tab" data-tab="story">🎭 구연동화왕</div>
   <div class="tab" data-tab="aptitude">🧭 적성 검사</div>
-  <div class="tab" data-tab="qa">🙋 질문 남기기</div>
 </div>
 
 <!-- Safety Scout Panel -->
@@ -491,33 +490,6 @@
       <p id="apt-type-desc" style="font-size:13px; line-height:1.7; color:#555; text-align:left;"></p>
       <div id="apt-advice" style="margin-top:12px; padding:12px; border-radius:12px; background:#FFF8E7; border-left:4px solid var(--yellow); font-size:12.5px; text-align:left; line-height:1.6; color:#555;"></div>
       <button class="btn" id="apt-restart" style="margin-top:14px;">↺ 다시 해보기</button>
-    </div>
-  </div>
-</div>
-
-<!-- Q&A Panel -->
-<div class="panel" id="panel-qa">
-  <div class="card">
-    <span class="badge-tag">🙋 질문</span>
-    <h2>선생님께 직접 물어보세요</h2>
-    <p>궁금한 점을 남기면 특강 마지막에 답변해드려요.</p>
-  </div>
-
-  <div class="card">
-    <div class="q-form">
-      <textarea id="q-input" placeholder="예) 유치원 선생님이 되려면 피아노를 꼭 쳐야 하나요?"></textarea>
-      <button class="btn mint" id="q-submit">📮 질문 보내기</button>
-    </div>
-    <div class="my-qs" id="my-qs"></div>
-  </div>
-
-  <div class="card">
-    <b style="font-size:13px;">💡 다른 친구들이 자주 묻는 질문</b>
-    <div class="checklist" style="margin-top:6px;">
-      <div class="check-row"><div class="lbl" style="text-decoration:none; color:#555;">💬 남자 유치원 선생님도 있나요?</div></div>
-      <div class="check-row"><div class="lbl" style="text-decoration:none; color:#555;">💬 월급은 어느 정도예요?</div></div>
-      <div class="check-row"><div class="lbl" style="text-decoration:none; color:#555;">💬 방학은 있나요?</div></div>
-      <div class="check-row"><div class="lbl" style="text-decoration:none; color:#555;">💬 문과·이과 상관 없나요?</div></div>
     </div>
   </div>
 </div>
@@ -1098,23 +1070,6 @@
   });
   renderApt();
 
-  // Q submission (localStorage)
-  const myQs = document.getElementById('my-qs');
-  function renderQs(){
-    const list = JSON.parse(localStorage.getItem('myQs')||'[]');
-    myQs.innerHTML = list.map((q,i) => `<div class="my-q">✅ ${q}</div>`).join('');
-  }
-  document.getElementById('q-submit').addEventListener('click', () => {
-    const input = document.getElementById('q-input');
-    const v = input.value.trim();
-    if (!v) return;
-    const list = JSON.parse(localStorage.getItem('myQs')||'[]');
-    list.push(v);
-    localStorage.setItem('myQs', JSON.stringify(list));
-    input.value = '';
-    renderQs();
-  });
-  renderQs();
 </script>
 </body>
 </html>
