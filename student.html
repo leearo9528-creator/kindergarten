@@ -79,44 +79,69 @@
     margin-bottom: 8px;
   }
 
-  /* Safety Scout */
-  .scene {
+  /* Safety Scout - Stage Scene */
+  .scene-box {
     position: relative;
-    background: linear-gradient(180deg, #FFF0F5, #FFE5EC);
+    width: 100%;
+    aspect-ratio: 4/5;
+    max-height: 460px;
+    background: linear-gradient(180deg, #F5E8D3 0%, #EFD9BD 55%, #D9B894 55%, #C9A47A 100%);
     border-radius: 16px;
-    padding: 20px;
-    min-height: 260px;
-    text-align: center;
-    font-size: 38px;
-    line-height: 1.3;
-    letter-spacing: 8px;
     overflow: hidden;
-    border: 3px dashed var(--pink);
+    box-shadow: inset 0 0 0 3px rgba(0,0,0,0.04);
+    margin-top: 10px;
   }
-  .hazard-list { display: grid; gap: 8px; }
-  .hazard-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background: white;
-    padding: 12px 14px;
-    border-radius: 12px;
+  .obj {
+    position: absolute;
     cursor: pointer;
     user-select: none;
-    border: 2px solid transparent;
-    transition: all 0.2s;
+    transition: transform 0.15s ease, filter 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    -webkit-tap-highlight-color: transparent;
   }
-  .hazard-item .chk {
-    width: 24px; height: 24px; border-radius: 8px;
-    border: 2px solid #ddd;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 16px; color: white;
-    flex-shrink: 0;
+  .obj:active { transform: scale(0.9); }
+  .obj svg { width: 100%; height: 100%; display: block; }
+  .obj.found {
+    animation: foundPulse 0.5s ease;
+    filter: drop-shadow(0 0 10px rgba(107,203,119,0.9));
   }
-  .hazard-item.done { background: #E8F8E8; border-color: var(--mint); }
-  .hazard-item.done .chk { background: var(--mint); border-color: var(--mint); }
-  .hazard-item.done .label { text-decoration: line-through; color: #888; }
-  .hazard-item .label { font-size: 13px; font-weight: 600; }
+  .obj.miss {
+    animation: missShake 0.35s ease;
+  }
+  @keyframes foundPulse {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.3); }
+    100% { transform: scale(1); }
+  }
+  @keyframes missShake {
+    0%,100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
+  }
+  .obj .ring {
+    position: absolute;
+    inset: -6px;
+    border: 3px solid var(--mint);
+    border-radius: 50%;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .obj.found .ring { opacity: 1; animation: ringGrow 0.5s ease; }
+  @keyframes ringGrow {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1.1); opacity: 1; }
+  }
+  .feedback {
+    min-height: 28px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 700;
+    margin: 8px 0 0;
+  }
+  .feedback.good { color: var(--mint); }
+  .feedback.bad { color: #e74c3c; }
 
   .progress {
     height: 10px;
@@ -251,39 +276,25 @@
 <!-- Safety Scout Panel -->
 <div class="panel active" id="panel-safety">
   <div class="card">
-    <span class="badge-tag">🎯 미션</span>
-    <h2>교실에서 위험 요소를 찾아라!</h2>
-    <p>5살 아이의 눈높이로 교실을 살펴보세요. 아래 체크리스트에서 발견한 위험 요소를 눌러 표시하세요.</p>
+    <span class="badge-tag" id="stage-badge">🎯 1단계 / 7</span>
+    <h2 id="stage-title">위험을 찾아라, 안전 보안관</h2>
+    <p id="stage-desc">아이들의 시선에서 세상을 보는 '교사의 눈'을 체험해봐요. 교실 그림 속 <b>위험 요소</b>를 찾을 수 있나요?</p>
   </div>
 
   <div class="card">
-    <div class="scene">
-      🪑📚🧸🪟<br>
-      🖍️✂️🔌💡<br>
-      🧴🪣🪴🎨<br>
-      🧩🎈🧻🪞
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+      <span id="stage-count" style="font-size:13px; font-weight:700; color:var(--pink);">0 / 7 발견</span>
+      <span style="font-size:11px; color:#888;">👆 그림 속 물건을 탭해보세요</span>
     </div>
-  </div>
+    <div class="progress"><div class="bar" id="stage-bar"></div></div>
 
-  <div class="card">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-      <b style="font-size:14px;">✍️ 위험 요소 체크리스트</b>
-      <span id="safety-count" style="font-size:12px; color:#888;">0 / 8</span>
-    </div>
-    <div class="progress"><div class="bar" id="safety-bar"></div></div>
-    <div class="hazard-list" id="hazard-list">
-      <div class="hazard-item" data-h="1"><div class="chk">✓</div><div class="label">뾰족한 모서리 (책상·선반)</div></div>
-      <div class="hazard-item" data-h="2"><div class="chk">✓</div><div class="label">삼킬 수 있는 작은 부품</div></div>
-      <div class="hazard-item" data-h="3"><div class="chk">✓</div><div class="label">바닥에 늘어진 전선</div></div>
-      <div class="hazard-item" data-h="4"><div class="chk">✓</div><div class="label">손 닿는 높이의 콘센트</div></div>
-      <div class="hazard-item" data-h="5"><div class="chk">✓</div><div class="label">깨질 수 있는 유리·거울</div></div>
-      <div class="hazard-item" data-h="6"><div class="chk">✓</div><div class="label">쓰러질 수 있는 물건</div></div>
-      <div class="hazard-item" data-h="7"><div class="chk">✓</div><div class="label">기어오를 수 있는 가구</div></div>
-      <div class="hazard-item" data-h="8"><div class="chk">✓</div><div class="label">뜨거운 물건 (정수기 등)</div></div>
-    </div>
+    <div class="scene-box" id="scene"></div>
+    <div class="feedback" id="feedback"></div>
+
     <div class="celebrate" id="safety-celebrate">
       🏆 <b>완벽한 안전 보안관!</b><br>
       <span style="font-size:12px; color:#666;">선생님은 매일 이 모든 걸 체크하고 있어요.</span>
+      <button class="btn ghost" style="margin-top:10px;" id="restart-btn">↺ 다시 도전</button>
     </div>
   </div>
 </div>
@@ -378,21 +389,208 @@
     if (h) activateTab(h);
   });
 
-  // Safety scout
-  const hazards = document.querySelectorAll('.hazard-item');
-  const safetyCount = document.getElementById('safety-count');
-  const safetyBar = document.getElementById('safety-bar');
-  const safetyCelebrate = document.getElementById('safety-celebrate');
-  hazards.forEach(h => {
-    h.addEventListener('click', () => {
-      h.classList.toggle('done');
-      const done = document.querySelectorAll('.hazard-item.done').length;
-      safetyCount.textContent = done + ' / 8';
-      safetyBar.style.width = (done/8*100) + '%';
-      if (done === 8) safetyCelebrate.classList.add('show');
-      else safetyCelebrate.classList.remove('show');
+  // ========== Safety Scout · 7-Stage Game ==========
+  const SVG = {
+    // 책장 (sharp corner)
+    shelf: `<svg viewBox="0 0 100 100"><rect x="15" y="10" width="70" height="85" fill="#C87941" stroke="#8B4513" stroke-width="2"/><rect x="20" y="18" width="60" height="20" fill="#F5DEB3"/><rect x="20" y="42" width="60" height="20" fill="#F5DEB3"/><rect x="20" y="66" width="60" height="25" fill="#F5DEB3"/><rect x="25" y="20" width="6" height="16" fill="#FF6B6B"/><rect x="33" y="20" width="6" height="16" fill="#4ECDC4"/><rect x="41" y="20" width="6" height="16" fill="#FFD93D"/></svg>`,
+    // 책상 모서리
+    deskCorner: `<svg viewBox="0 0 100 100"><rect x="10" y="30" width="80" height="10" fill="#D2691E"/><rect x="15" y="40" width="6" height="50" fill="#A0522D"/><rect x="79" y="40" width="6" height="50" fill="#A0522D"/></svg>`,
+    // 쿠션
+    cushion: `<svg viewBox="0 0 100 100"><ellipse cx="50" cy="60" rx="40" ry="25" fill="#FFB6C1"/><ellipse cx="50" cy="55" rx="38" ry="22" fill="#FFC0CB"/></svg>`,
+    // 러그
+    rug: `<svg viewBox="0 0 100 100"><rect x="5" y="35" width="90" height="55" rx="8" fill="#E8A87C"/><rect x="12" y="42" width="76" height="41" rx="4" fill="none" stroke="#C38D5F" stroke-width="2" stroke-dasharray="4"/></svg>`,
+    // 작은 레고조각
+    lego: `<svg viewBox="0 0 100 100"><rect x="30" y="40" width="40" height="25" fill="#FF6B6B" rx="2"/><circle cx="40" cy="40" r="5" fill="#FF6B6B"/><circle cx="55" cy="40" r="5" fill="#FF6B6B"/></svg>`,
+    // 큰 블록
+    bigBlock: `<svg viewBox="0 0 100 100"><rect x="20" y="30" width="60" height="55" fill="#4ECDC4" rx="4"/><circle cx="35" cy="30" r="8" fill="#4ECDC4"/><circle cx="65" cy="30" r="8" fill="#4ECDC4"/></svg>`,
+    // 곰인형
+    teddy: `<svg viewBox="0 0 100 100"><circle cx="50" cy="40" r="22" fill="#A0522D"/><circle cx="38" cy="30" r="8" fill="#A0522D"/><circle cx="62" cy="30" r="8" fill="#A0522D"/><circle cx="42" cy="38" r="2.5" fill="#000"/><circle cx="58" cy="38" r="2.5" fill="#000"/><ellipse cx="50" cy="78" rx="25" ry="18" fill="#A0522D"/></svg>`,
+    // 전선 (늘어진)
+    cable: `<svg viewBox="0 0 100 100"><path d="M 10 50 Q 30 70 50 55 T 90 60" stroke="#2C3E50" stroke-width="4" fill="none" stroke-linecap="round"/><rect x="6" y="46" width="10" height="8" fill="#555" rx="1"/><rect x="86" y="56" width="10" height="8" fill="#555" rx="1"/></svg>`,
+    // TV
+    tv: `<svg viewBox="0 0 100 100"><rect x="15" y="25" width="70" height="45" fill="#2C3E50" rx="3"/><rect x="20" y="30" width="60" height="35" fill="#5DADE2"/><rect x="42" y="70" width="16" height="8" fill="#34495E"/><rect x="35" y="78" width="30" height="4" fill="#2C3E50"/></svg>`,
+    // 콘센트 (낮은 위치)
+    outlet: `<svg viewBox="0 0 100 100"><rect x="30" y="30" width="40" height="50" fill="#F5F5F5" rx="4" stroke="#CCC" stroke-width="2"/><circle cx="42" cy="50" r="3" fill="#333"/><circle cx="58" cy="50" r="3" fill="#333"/><rect x="46" y="63" width="8" height="3" fill="#333" rx="1"/></svg>`,
+    // 스위치 (안전)
+    switch: `<svg viewBox="0 0 100 100"><rect x="35" y="25" width="30" height="50" fill="#F5F5F5" rx="3" stroke="#CCC" stroke-width="2"/><rect x="42" y="40" width="16" height="22" fill="#DDD" rx="2"/></svg>`,
+    // 유리 꽃병
+    vase: `<svg viewBox="0 0 100 100"><ellipse cx="50" cy="78" rx="20" ry="6" fill="#99D9EA" opacity="0.6"/><path d="M 35 35 Q 30 55 35 75 Q 50 82 65 75 Q 70 55 65 35 Z" fill="#B0E0E6" opacity="0.8" stroke="#87CEEB" stroke-width="1.5"/><ellipse cx="45" cy="20" rx="4" ry="6" fill="#FF69B4"/><ellipse cx="55" cy="18" rx="4" ry="6" fill="#FFD93D"/><line x1="45" y1="26" x2="45" y2="35" stroke="#228B22" stroke-width="2"/><line x1="55" y1="24" x2="55" y2="35" stroke="#228B22" stroke-width="2"/></svg>`,
+    // 거울
+    mirror: `<svg viewBox="0 0 100 100"><ellipse cx="50" cy="50" rx="28" ry="38" fill="#E0F7FA" stroke="#B0BEC5" stroke-width="4"/><path d="M 35 30 Q 45 25 55 30" stroke="white" stroke-width="3" fill="none" opacity="0.7"/></svg>`,
+    // 화분
+    plant: `<svg viewBox="0 0 100 100"><path d="M 50 35 Q 30 20 35 50 M 50 35 Q 70 20 65 50 M 50 35 L 50 65" stroke="#228B22" stroke-width="4" fill="none"/><ellipse cx="32" cy="40" rx="10" ry="14" fill="#2E8B57"/><ellipse cx="68" cy="40" rx="10" ry="14" fill="#2E8B57"/><ellipse cx="50" cy="30" rx="10" ry="14" fill="#3CB371"/><path d="M 35 65 L 65 65 L 70 85 L 30 85 Z" fill="#8B4513"/></svg>`,
+    // 그림액자
+    frame: `<svg viewBox="0 0 100 100"><rect x="15" y="15" width="70" height="70" fill="#8B4513" stroke="#654321" stroke-width="3"/><rect x="22" y="22" width="56" height="56" fill="#FFE4E1"/><circle cx="40" cy="45" r="8" fill="#FFD93D"/><path d="M 20 78 L 45 55 L 65 70 L 78 60 L 78 78 Z" fill="#87CEEB"/></svg>`,
+    // 높은 선반 (쓰러질)
+    tallShelf: `<svg viewBox="0 0 100 100"><rect x="25" y="5" width="50" height="85" fill="#A0522D" stroke="#654321" stroke-width="2"/><rect x="30" y="10" width="40" height="18" fill="#F5DEB3"/><rect x="30" y="32" width="40" height="18" fill="#F5DEB3"/><rect x="30" y="54" width="40" height="18" fill="#F5DEB3"/><rect x="30" y="76" width="40" height="10" fill="#F5DEB3"/><circle cx="40" cy="18" r="5" fill="#FF6B6B"/><rect x="50" y="13" width="15" height="12" fill="#4ECDC4"/><rect x="35" y="37" width="30" height="10" fill="#FFD93D"/></svg>`,
+    // 낮은 테이블 (안전)
+    lowTable: `<svg viewBox="0 0 100 100"><rect x="10" y="55" width="80" height="8" fill="#D2691E" rx="2"/><rect x="15" y="63" width="6" height="25" fill="#A0522D"/><rect x="79" y="63" width="6" height="25" fill="#A0522D"/></svg>`,
+    // 쌓은 상자
+    boxStack: `<svg viewBox="0 0 100 100"><rect x="25" y="55" width="50" height="30" fill="#DEB887" stroke="#8B7355" stroke-width="2"/><rect x="30" y="30" width="40" height="25" fill="#D2B48C" stroke="#8B7355" stroke-width="2"/><rect x="35" y="10" width="30" height="20" fill="#CDAE88" stroke="#8B7355" stroke-width="2"/></svg>`,
+    // 계단 서랍장
+    climbDrawer: `<svg viewBox="0 0 100 100"><rect x="15" y="20" width="70" height="75" fill="#C87941" stroke="#8B4513" stroke-width="2"/><rect x="20" y="25" width="60" height="18" fill="#DEB887"/><rect x="20" y="46" width="60" height="18" fill="#DEB887"/><rect x="20" y="67" width="60" height="18" fill="#DEB887"/><circle cx="50" cy="34" r="2.5" fill="#654321"/><circle cx="50" cy="55" r="2.5" fill="#654321"/><circle cx="50" cy="76" r="2.5" fill="#654321"/></svg>`,
+    // 고정 수납장
+    cabinet: `<svg viewBox="0 0 100 100"><rect x="20" y="40" width="60" height="50" fill="#708090" stroke="#2F4F4F" stroke-width="2"/><rect x="25" y="45" width="24" height="40" fill="#778899"/><rect x="51" y="45" width="24" height="40" fill="#778899"/><circle cx="46" cy="65" r="1.5" fill="#FFF"/><circle cx="54" cy="65" r="1.5" fill="#FFF"/></svg>`,
+    // 창문
+    window: `<svg viewBox="0 0 100 100"><rect x="10" y="15" width="80" height="60" fill="#B0E0E6" stroke="#8B7355" stroke-width="3"/><line x1="50" y1="15" x2="50" y2="75" stroke="#8B7355" stroke-width="3"/><line x1="10" y1="45" x2="90" y2="45" stroke="#8B7355" stroke-width="3"/><circle cx="70" cy="28" r="6" fill="#FFD93D"/></svg>`,
+    // 공
+    ball: `<svg viewBox="0 0 100 100"><circle cx="50" cy="55" r="22" fill="#FF6B6B"/><circle cx="50" cy="55" r="22" fill="none" stroke="#CC0000" stroke-width="2"/><path d="M 28 55 Q 50 40 72 55 M 28 55 Q 50 70 72 55" stroke="#CC0000" stroke-width="1.5" fill="none"/></svg>`,
+    // 의자
+    chair: `<svg viewBox="0 0 100 100"><rect x="28" y="15" width="44" height="35" fill="#FFB6C1"/><rect x="28" y="50" width="44" height="8" fill="#FF8FB1"/><rect x="30" y="58" width="6" height="30" fill="#FFB6C1"/><rect x="64" y="58" width="6" height="30" fill="#FFB6C1"/></svg>`,
+  };
+
+  const stages = [
+    {
+      title: '1️⃣ 뾰족한 모서리를 찾아라',
+      desc: '아이가 뛰다가 부딪히면 다칠 수 있어요. 모서리가 뾰족한 가구는 어디?',
+      hint: '💡 쿠션은 안전해요. 단단하고 각진 물건을 찾아보세요.',
+      objects: [
+        { svg: 'shelf', x: 6, y: 10, w: 28, hazard: true, label: '책장 모서리' },
+        { svg: 'cushion', x: 40, y: 65, w: 28 },
+        { svg: 'teddy', x: 70, y: 50, w: 22 },
+        { svg: 'rug', x: 8, y: 72, w: 80 },
+      ]
+    },
+    {
+      title: '2️⃣ 삼킬 수 있는 작은 부품',
+      desc: '5살 아이는 뭐든 입에 넣어봐요. 삼킬 수 있을 만큼 작은 물건은?',
+      hint: '💡 큰 장난감은 괜찮아요. 아주 작은 부품을 찾아보세요.',
+      objects: [
+        { svg: 'bigBlock', x: 10, y: 55, w: 26 },
+        { svg: 'lego', x: 50, y: 78, w: 10, hazard: true, label: '작은 레고 조각' },
+        { svg: 'teddy', x: 65, y: 50, w: 26 },
+        { svg: 'ball', x: 30, y: 20, w: 20 },
+      ]
+    },
+    {
+      title: '3️⃣ 바닥에 늘어진 전선',
+      desc: '걸려 넘어지면 큰일 나요. 바닥에 늘어진 전선은 어디?',
+      hint: '💡 벽에 붙은 것은 괜찮아요. 바닥에 있는 긴 줄을 찾아보세요.',
+      objects: [
+        { svg: 'tv', x: 10, y: 15, w: 32 },
+        { svg: 'cable', x: 20, y: 60, w: 60, hazard: true, label: '바닥의 전선' },
+        { svg: 'plant', x: 70, y: 25, w: 22 },
+        { svg: 'chair', x: 55, y: 55, w: 22 },
+      ]
+    },
+    {
+      title: '4️⃣ 손 닿는 높이의 콘센트',
+      desc: '아이 손가락이 들어갈 수 있어요. 낮은 곳에 있는 콘센트는?',
+      hint: '💡 스위치는 조금 달라요. 구멍이 두 개 있는 걸 찾아보세요.',
+      objects: [
+        { svg: 'switch', x: 12, y: 30, w: 16 },
+        { svg: 'outlet', x: 38, y: 70, w: 18, hazard: true, label: '낮은 콘센트' },
+        { svg: 'window', x: 62, y: 15, w: 30 },
+        { svg: 'frame', x: 20, y: 10, w: 18 },
+      ]
+    },
+    {
+      title: '5️⃣ 깨질 수 있는 유리·거울',
+      desc: '떨어지면 산산조각! 깨질 수 있는 유리 물건은 어디?',
+      hint: '💡 나무 액자는 괜찮아요. 투명하고 반짝이는 걸 찾아보세요.',
+      objects: [
+        { svg: 'vase', x: 15, y: 25, w: 20, hazard: true, label: '유리 꽃병' },
+        { svg: 'frame', x: 42, y: 20, w: 22 },
+        { svg: 'teddy', x: 72, y: 55, w: 22 },
+        { svg: 'rug', x: 8, y: 75, w: 80 },
+      ]
+    },
+    {
+      title: '6️⃣ 쓰러질 수 있는 물건',
+      desc: '높고 불안정한 물건은 넘어질 수 있어요. 쓰러질 위험이 있는 건?',
+      hint: '💡 낮은 테이블은 안전해요. 위로 쌓여있거나 높은 걸 찾아보세요.',
+      objects: [
+        { svg: 'lowTable', x: 8, y: 65, w: 30 },
+        { svg: 'boxStack', x: 45, y: 15, w: 26, hazard: true, label: '쌓여있는 상자' },
+        { svg: 'plant', x: 75, y: 55, w: 20 },
+        { svg: 'ball', x: 20, y: 40, w: 14 },
+      ]
+    },
+    {
+      title: '7️⃣ 기어오를 수 있는 가구',
+      desc: '서랍장처럼 계단 같은 가구에 올라가면 넘어질 수 있어요!',
+      hint: '💡 벽에 고정된 수납장은 안전해요. 단이 있고 손잡이가 층층이 있는 걸 찾아보세요.',
+      objects: [
+        { svg: 'cabinet', x: 10, y: 35, w: 28 },
+        { svg: 'climbDrawer', x: 45, y: 15, w: 28, hazard: true, label: '서랍 달린 낮은 장' },
+        { svg: 'chair', x: 75, y: 55, w: 20 },
+        { svg: 'rug', x: 8, y: 80, w: 80 },
+      ]
+    },
+  ];
+
+  const sceneEl = document.getElementById('scene');
+  const stageBadge = document.getElementById('stage-badge');
+  const stageTitle = document.getElementById('stage-title');
+  const stageDesc = document.getElementById('stage-desc');
+  const stageCount = document.getElementById('stage-count');
+  const stageBar = document.getElementById('stage-bar');
+  const feedbackEl = document.getElementById('feedback');
+  const celebrateEl = document.getElementById('safety-celebrate');
+
+  let stageIdx = 0;
+  let cleared = 0;
+
+  function renderStage(i) {
+    const s = stages[i];
+    stageBadge.textContent = `🎯 ${i+1}단계 / 7`;
+    stageTitle.textContent = s.title;
+    stageDesc.textContent = s.desc;
+    feedbackEl.textContent = '';
+    feedbackEl.className = 'feedback';
+    sceneEl.innerHTML = '';
+    s.objects.forEach((o, idx) => {
+      const div = document.createElement('div');
+      div.className = 'obj';
+      div.style.left = o.x + '%';
+      div.style.top = o.y + '%';
+      div.style.width = o.w + '%';
+      div.style.aspectRatio = '1/1';
+      div.innerHTML = SVG[o.svg] + '<div class="ring"></div>';
+      div.addEventListener('click', () => handleClick(o, div));
+      sceneEl.appendChild(div);
     });
+  }
+
+  function handleClick(o, el) {
+    if (el.classList.contains('found')) return;
+    if (o.hazard) {
+      el.classList.add('found');
+      feedbackEl.textContent = `✅ 정답! ${o.label}`;
+      feedbackEl.className = 'feedback good';
+      cleared++;
+      stageCount.textContent = `${cleared} / 7 발견`;
+      stageBar.style.width = (cleared/7*100) + '%';
+      if (navigator.vibrate) navigator.vibrate(80);
+      setTimeout(() => {
+        if (stageIdx < stages.length - 1) {
+          stageIdx++;
+          renderStage(stageIdx);
+        } else {
+          celebrateEl.classList.add('show');
+          sceneEl.style.display = 'none';
+        }
+      }, 900);
+    } else {
+      el.classList.add('miss');
+      feedbackEl.textContent = '❌ 다시 찾아보세요. ' + stages[stageIdx].hint;
+      feedbackEl.className = 'feedback bad';
+      if (navigator.vibrate) navigator.vibrate([40,40,40]);
+      setTimeout(() => el.classList.remove('miss'), 400);
+    }
+  }
+
+  document.getElementById('restart-btn').addEventListener('click', () => {
+    stageIdx = 0;
+    cleared = 0;
+    stageCount.textContent = '0 / 7 발견';
+    stageBar.style.width = '0%';
+    celebrateEl.classList.remove('show');
+    sceneEl.style.display = '';
+    renderStage(0);
   });
+
+  renderStage(0);
 
   // Story cards
   const stories = [
