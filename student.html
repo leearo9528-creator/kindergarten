@@ -261,6 +261,52 @@
   .check-row.on .mini-chk { background: var(--mint); border-color: var(--mint); }
   .check-row.on .lbl { text-decoration: line-through; color:#888; }
 
+  /* Student Quiz Card */
+  .sq-card {
+    background: white;
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+    border-left: 4px solid var(--pink);
+  }
+  .sq-card.done { border-left-color: var(--mint); }
+  .sq-card .q {
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.5;
+    margin: 0 0 10px;
+  }
+  .sq-card .qn { color: var(--pink); margin-right: 4px; }
+  .sq-card.done .qn { color: var(--mint); }
+  .sq-card .opts { display: grid; gap: 6px; }
+  .sq-card .opt {
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: #F5F7FA;
+    font-size: 13px;
+    line-height: 1.45;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.2s;
+  }
+  .sq-card .opt:active { transform: scale(0.98); }
+  .sq-card .opt.correct { background: #E8F8E8; border-color: var(--mint); color: #2E8B57; font-weight: 700; }
+  .sq-card .opt.wrong { background: #FFE5E5; border-color: #FFB3B3; color: #C0392B; }
+  .sq-card .opt.disabled { pointer-events: none; }
+  .sq-card .why {
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 10px;
+    background: #FFF8E7;
+    font-size: 12px;
+    line-height: 1.55;
+    color: #555;
+    border-left: 3px solid var(--yellow);
+    display: none;
+  }
+  .sq-card.answered .why { display: block; animation: fadeUp 0.3s; }
+
   /* Q submission */
   .q-form { display: flex; flex-direction: column; gap: 10px; }
   .q-form textarea {
@@ -309,6 +355,8 @@
 
 <div class="tabs" id="tabs">
   <div class="tab active" data-tab="safety">🔍 안전 보안관</div>
+  <div class="tab" data-tab="recap">📝 1교시 퀴즈</div>
+  <div class="tab" data-tab="empathy">🧠 공감 퀴즈</div>
   <div class="tab" data-tab="story">🎭 구연동화왕</div>
   <div class="tab" data-tab="aptitude">🧭 적성 검사</div>
   <div class="tab" data-tab="qa">🙋 질문 남기기</div>
@@ -378,6 +426,38 @@
       <div class="check-row" data-c="v4"><div class="mini-chk">✓</div><div class="lbl">1분 안에 끝난다</div></div>
       <div class="check-row" data-c="v5"><div class="mini-chk">✓</div><div class="lbl">5살이 들어도 이해된다</div></div>
     </div>
+  </div>
+</div>
+
+<!-- Recap Quiz Panel -->
+<div class="panel" id="panel-recap">
+  <div class="card">
+    <span class="badge-tag">📝 1교시 퀴즈</span>
+    <h2>방금 배운 내용, 머리에 남았나요?</h2>
+    <p>5문항에 답해보세요. 모르면 선생님 화면 힌트를 보고 풀어도 OK!</p>
+    <div class="progress" style="margin-top:10px;"><div class="bar" id="recap-bar"></div></div>
+    <div style="font-size:12px; color:#888; text-align:right; margin-top:4px;"><span id="recap-count">0</span> / 5</div>
+  </div>
+  <div id="recap-quiz-list"></div>
+  <div class="celebrate" id="recap-celebrate">
+    👏 <b>1교시 핵심 완벽 이해!</b><br>
+    <span style="font-size:12px; color:#666;">점수: <span id="recap-score">0</span> / 5</span>
+  </div>
+</div>
+
+<!-- Empathy Quiz Panel -->
+<div class="panel" id="panel-empathy">
+  <div class="card">
+    <span class="badge-tag">🧠 공감 퀴즈</span>
+    <h2>이런 상황, 올바른 대답은?</h2>
+    <p>7개 상황에 맞는 공감 대답을 골라보세요.</p>
+    <div class="progress" style="margin-top:10px;"><div class="bar" id="empathy-bar"></div></div>
+    <div style="font-size:12px; color:#888; text-align:right; margin-top:4px;"><span id="empathy-count">0</span> / 7</div>
+  </div>
+  <div id="empathy-quiz-list"></div>
+  <div class="celebrate" id="empathy-celebrate">
+    🎉 <b>공감의 기술 마스터!</b><br>
+    <span style="font-size:12px; color:#666;">점수: <span id="empathy-score">0</span> / 7</span>
   </div>
 </div>
 
@@ -849,6 +929,95 @@
   document.querySelectorAll('.check-row[data-c]').forEach(r => {
     r.addEventListener('click', () => r.classList.toggle('on'));
   });
+
+  // ========== Quizzes (Recap + Empathy) ==========
+  const recapQuiz = [
+    { q:'유치원은 보육과 교육 중 무엇에 더 가까울까요?',
+      opts:[{t:'보육 — 안전하게 돌보는 곳',ok:false},{t:'교육 — 사고력·사회성·창의력을 길러주는 곳',ok:true},{t:'둘은 같은 의미',ok:false}],
+      why:'💡 유치원 교사는 교사 자격증을 가진 교육 전문가예요.' },
+    { q:'만 3~5세를 위한 국가 수준 교육과정의 이름은?',
+      opts:[{t:'초등 기본과정',ok:false},{t:'누리과정',ok:true},{t:'유아특수과정',ok:false}],
+      why:'💡 누리과정 5영역: 신체·의사소통·사회관계·예술경험·자연탐구' },
+    { q:'유치원 교사에게 필요한 역량이 아닌 것은?',
+      opts:[{t:'인내심과 공감 능력',ok:false},{t:'돌발 상황 대처 순발력',ok:false},{t:'한 번에 알아듣는 똑똑한 아이만 가르치는 능력',ok:true}],
+      why:'💡 같은 질문에 100번 답하는 인내심이 핵심.' },
+    { q:'공립 유치원 교사가 되려면 최종적으로 통과해야 하는 시험은?',
+      opts:[{t:'임용고시',ok:true},{t:'일반 공무원 시험',ok:false},{t:'영어 토익 시험',ok:false}],
+      why:'💡 유아교육과 → 정교사 2급 자격증 → 공립 임용고시 / 사립 채용' },
+    { q:'퇴근 후에도 이어지는 업무가 아닌 것은?',
+      opts:[{t:'관찰 일지 작성',ok:false},{t:'교구 제작·환경 구성',ok:false},{t:'놀이기구 직접 구매',ok:true}],
+      why:'💡 수업 뒤엔 관찰 기록·상담·교구 제작까지 이어져요.' }
+  ];
+
+  const empathyQuiz = [
+    { q:'친구가 장난감을 빼앗아가서 아이가 엉엉 울고 있어요.',
+      opts:[{t:'"울지 마, 뚝 그쳐!"',ok:false},{t:'"장난감을 뺏겨서 많이 속상했구나."',ok:true},{t:'"그 친구한테 똑같이 해버려."',ok:false}],
+      why:'💡 감정을 먼저 읽어주는 것이 공감의 시작.' },
+    { q:'등원 첫날, "엄마 보고 싶어..." 훌쩍이는 아이에게',
+      opts:[{t:'"엄마 이따 오셔, 울지 마."',ok:false},{t:'"엄마가 많이 보고 싶구나. 안아줄까?"',ok:true},{t:'"다 큰 아이가 울면 안 되지."',ok:false}],
+      why:'💡 감정을 부정하지 말고 이름을 붙여주세요.' },
+    { q:'화가 나서 친구를 때린 아이에게',
+      opts:[{t:'"왜 때렸어! 너도 맞아볼래?"',ok:false},{t:'"친구 때리면 안 돼! 구석 가 있어."',ok:false},{t:'"화가 많이 났구나. 그래도 때리면 아파. 말로 해볼까?"',ok:true}],
+      why:'💡 감정(화남)은 받아주고, 행동(때리기)은 분리해 가르쳐요.' },
+    { q:'그림을 자랑스럽게 들고 온 아이에게',
+      opts:[{t:'"와~ 최고! 너는 천재야!"',ok:false},{t:'"여기 빨간 선이 힘차네. 어떻게 그린 거야?"',ok:true},{t:'"응, 잘 그렸네." (다른 일 하면서)',ok:false}],
+      why:'💡 결과보다 과정·구체적 부분을 칭찬하면 주도성 UP.' },
+    { q:'밥을 안 먹겠다며 고개 젓는 아이에게',
+      opts:[{t:'"다 먹을 때까지 자리에서 못 일어나."',ok:false},{t:'"한 숟가락만 같이 먹어볼까? 선택지를 줄게."',ok:true},{t:'"그래, 그럼 먹지 마."',ok:false}],
+      why:'💡 "선택했다"는 느낌을 주면 협조해요.' },
+    { q:'실수로 우유를 쏟은 당황한 아이에게',
+      opts:[{t:'"어머! 왜 그랬어! 얼른 치워!"',ok:false},{t:'"괜찮아, 실수할 수 있어. 같이 닦아볼까?"',ok:true},{t:'(한숨) "너는 매번 왜 이래..."',ok:false}],
+      why:'💡 실수를 용납받은 아이가 도전을 계속해요.' },
+    { q:'"선생님, 나 이거 못해요..." 주저앉는 아이에게',
+      opts:[{t:'"안 되긴! 해보기나 했어?"',ok:false},{t:'"어려워 보이는구나. 어디까지 해봤어?"',ok:true},{t:'"그래, 선생님이 대신 해줄게."',ok:false}],
+      why:'💡 감정 인정 → 현재 지점 파악 → 작은 단서.' }
+  ];
+
+  function buildStudentQuiz(listId, countId, barId, celebrateId, scoreId, data) {
+    const list = document.getElementById(listId);
+    if (!list) return;
+    const total = data.length;
+    let answered = 0, correct = 0;
+    const countEl = document.getElementById(countId);
+    const barEl = document.getElementById(barId);
+    const celebrateEl = document.getElementById(celebrateId);
+    const scoreEl = document.getElementById(scoreId);
+    data.forEach((q, i) => {
+      const div = document.createElement('div');
+      div.className = 'sq-card';
+      div.innerHTML = `
+        <div class="q"><span class="qn">Q${i+1}.</span>${q.q}</div>
+        <div class="opts">
+          ${q.opts.map(o => `<div class="opt" data-ok="${o.ok}">${o.t}</div>`).join('')}
+        </div>
+        <div class="why">${q.why}</div>
+      `;
+      list.appendChild(div);
+      div.querySelectorAll('.opt').forEach(o => {
+        o.addEventListener('click', () => {
+          if (div.classList.contains('answered')) return;
+          div.classList.add('answered');
+          div.querySelectorAll('.opt').forEach(x => x.classList.add('disabled'));
+          if (o.dataset.ok === 'true') { o.classList.add('correct'); correct++; }
+          else {
+            o.classList.add('wrong');
+            div.querySelectorAll('.opt').forEach(x => { if (x.dataset.ok === 'true') x.classList.add('correct'); });
+          }
+          div.classList.add('done');
+          answered++;
+          countEl.textContent = answered;
+          barEl.style.width = (answered/total*100) + '%';
+          if (navigator.vibrate) navigator.vibrate(60);
+          if (answered === total) {
+            scoreEl.textContent = correct;
+            celebrateEl.classList.add('show');
+          }
+        });
+      });
+    });
+  }
+  buildStudentQuiz('recap-quiz-list','recap-count','recap-bar','recap-celebrate','recap-score', recapQuiz);
+  buildStudentQuiz('empathy-quiz-list','empathy-count','empathy-bar','empathy-celebrate','empathy-score', empathyQuiz);
 
   // ========== Aptitude Test ==========
   const aptQuestions = [
