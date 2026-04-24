@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#FF8FB1">
+<title>유치원 교사 특강 · 학생 활동</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<style>
+  :root {
+    --pink: #FF8FB1;
+    --yellow: #FFD93D;
+    --mint: #6BCB77;
+    --blue: #4D96FF;
+    --purple: #B088F9;
+    --cream: #FFF8E7;
+    --dark: #2D3436;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin:0; padding:0; font-family:'Pretendard',-apple-system,sans-serif; color:var(--dark); background:linear-gradient(180deg,#FFE5EC 0%,#FFF8E7 40%,#E7F0FF 100%); min-height:100vh; }
+  body { padding-bottom: 80px; }
+
+  .hero {
+    padding: 24px 20px 20px;
+    text-align: center;
+    background: linear-gradient(135deg, #FFC8DD, #BDE0FE);
+    border-radius: 0 0 28px 28px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+  }
+  .hero h1 { margin:0; font-size: 22px; font-weight: 800; letter-spacing:-0.02em; }
+  .hero p { margin: 6px 0 0; font-size: 13px; color:#555; }
+  .hero .emoji { font-size: 36px; }
+
+  .tabs {
+    display: flex;
+    gap: 8px;
+    padding: 16px 16px 8px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab {
+    flex: 0 0 auto;
+    padding: 10px 16px;
+    background: white;
+    border-radius: 22px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #666;
+    cursor: pointer;
+    border: 2px solid transparent;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .tab.active { background: var(--pink); color: white; border-color: var(--pink); box-shadow: 0 4px 14px rgba(255,143,177,0.4); }
+
+  .panel { display: none; padding: 12px 16px; }
+  .panel.active { display: block; animation: fadeUp 0.3s ease; }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+  .card {
+    background: white;
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: 0 3px 14px rgba(0,0,0,0.06);
+    margin-bottom: 12px;
+  }
+  .card h2 { margin:0 0 8px; font-size: 17px; font-weight: 800; }
+  .card p { margin: 0; font-size: 13px; color:#555; line-height: 1.6; }
+
+  .badge-tag {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 700;
+    background: var(--yellow);
+    margin-bottom: 8px;
+  }
+
+  /* Safety Scout */
+  .scene {
+    position: relative;
+    background: linear-gradient(180deg, #FFF0F5, #FFE5EC);
+    border-radius: 16px;
+    padding: 20px;
+    min-height: 260px;
+    text-align: center;
+    font-size: 38px;
+    line-height: 1.3;
+    letter-spacing: 8px;
+    overflow: hidden;
+    border: 3px dashed var(--pink);
+  }
+  .hazard-list { display: grid; gap: 8px; }
+  .hazard-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: white;
+    padding: 12px 14px;
+    border-radius: 12px;
+    cursor: pointer;
+    user-select: none;
+    border: 2px solid transparent;
+    transition: all 0.2s;
+  }
+  .hazard-item .chk {
+    width: 24px; height: 24px; border-radius: 8px;
+    border: 2px solid #ddd;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; color: white;
+    flex-shrink: 0;
+  }
+  .hazard-item.done { background: #E8F8E8; border-color: var(--mint); }
+  .hazard-item.done .chk { background: var(--mint); border-color: var(--mint); }
+  .hazard-item.done .label { text-decoration: line-through; color: #888; }
+  .hazard-item .label { font-size: 13px; font-weight: 600; }
+
+  .progress {
+    height: 10px;
+    background: #f0f0f0;
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 10px 0 14px;
+  }
+  .progress .bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--pink), var(--yellow));
+    width: 0;
+    transition: width 0.4s ease;
+  }
+
+  /* Storytelling */
+  .story-deck {
+    perspective: 1000px;
+    min-height: 220px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 14px;
+  }
+  .story-card {
+    background: white;
+    border-radius: 18px;
+    padding: 22px 18px;
+    text-align: center;
+    box-shadow: 0 8px 28px rgba(255,143,177,0.3);
+    border: 3px solid var(--pink);
+    width: 100%;
+    transition: transform 0.4s;
+  }
+  .story-card.flipping { transform: rotateY(90deg); }
+  .story-card .big-emoji { font-size: 48px; display: block; margin-bottom: 8px; }
+  .story-card h3 { margin:0 0 6px; font-size: 18px; }
+  .story-card .hint { font-size: 12px; color:#666; line-height:1.6; }
+
+  .btn {
+    width: 100%;
+    padding: 14px 16px;
+    border-radius: 14px;
+    font-size: 15px;
+    font-weight: 700;
+    border: 0;
+    cursor: pointer;
+    background: linear-gradient(135deg, var(--pink), var(--purple));
+    color: white;
+    box-shadow: 0 4px 14px rgba(255,143,177,0.4);
+    transition: all 0.2s;
+  }
+  .btn:active { transform: scale(0.97); }
+  .btn.ghost { background: white; color: var(--dark); box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+  .btn.blue { background: linear-gradient(135deg, var(--blue), #6EB3FF); box-shadow: 0 4px 14px rgba(77,150,255,0.4); }
+  .btn.mint { background: linear-gradient(135deg, var(--mint), #A8E6A3); box-shadow: 0 4px 14px rgba(107,203,119,0.4); }
+
+  .btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+
+  .timer {
+    font-size: 52px;
+    font-weight: 900;
+    text-align: center;
+    letter-spacing: -0.02em;
+    color: var(--pink);
+    font-variant-numeric: tabular-nums;
+    margin: 10px 0;
+  }
+  .timer.warn { color: var(--blue); }
+  .timer.end { color: #e74c3c; animation: shake 0.4s ease; }
+  @keyframes shake { 0%,100%{transform:translateX(0);} 25%{transform:translateX(-6px);} 75%{transform:translateX(6px);} }
+
+  .checklist { display: grid; gap: 6px; margin-top: 8px; }
+  .check-row { display: flex; gap: 10px; align-items: center; background: #FFF8E7; padding: 10px 12px; border-radius: 10px; font-size: 13px; cursor: pointer; user-select:none; }
+  .check-row .mini-chk { width: 20px; height: 20px; border-radius: 6px; border: 2px solid #ddd; flex-shrink:0; display:flex; align-items:center; justify-content:center; color:white; font-size:12px; }
+  .check-row.on { background: #E8F8E8; }
+  .check-row.on .mini-chk { background: var(--mint); border-color: var(--mint); }
+  .check-row.on .lbl { text-decoration: line-through; color:#888; }
+
+  /* Q submission */
+  .q-form { display: flex; flex-direction: column; gap: 10px; }
+  .q-form textarea {
+    width: 100%;
+    min-height: 90px;
+    padding: 12px;
+    border-radius: 12px;
+    border: 2px solid #eee;
+    font-family: inherit;
+    font-size: 14px;
+    resize: vertical;
+    outline: none;
+  }
+  .q-form textarea:focus { border-color: var(--pink); }
+  .my-qs { display: grid; gap: 6px; margin-top: 12px; }
+  .my-q {
+    background: #FFF8E7;
+    padding: 10px 12px;
+    border-radius: 10px;
+    font-size: 13px;
+    border-left: 4px solid var(--yellow);
+  }
+
+  .celebrate {
+    text-align: center;
+    padding: 16px;
+    background: linear-gradient(135deg, #FFE5EC, #E8F8E8);
+    border-radius: 14px;
+    margin-top: 10px;
+    display: none;
+    animation: pop 0.4s ease;
+  }
+  .celebrate.show { display: block; }
+  @keyframes pop { 0%{transform:scale(0.7); opacity:0;} 100%{transform:scale(1); opacity:1;} }
+
+  footer { text-align: center; padding: 20px; color:#999; font-size: 11px; }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="emoji">🎨</div>
+  <h1>유치원 교사 특강</h1>
+  <p>학생 활동 페이지 · 직접 참여해보세요!</p>
+</div>
+
+<div class="tabs" id="tabs">
+  <div class="tab active" data-tab="safety">🔍 안전 보안관</div>
+  <div class="tab" data-tab="story">🎭 구연동화왕</div>
+  <div class="tab" data-tab="qa">🙋 질문 남기기</div>
+</div>
+
+<!-- Safety Scout Panel -->
+<div class="panel active" id="panel-safety">
+  <div class="card">
+    <span class="badge-tag">🎯 미션</span>
+    <h2>교실에서 위험 요소를 찾아라!</h2>
+    <p>5살 아이의 눈높이로 교실을 살펴보세요. 아래 체크리스트에서 발견한 위험 요소를 눌러 표시하세요.</p>
+  </div>
+
+  <div class="card">
+    <div class="scene">
+      🪑📚🧸🪟<br>
+      🖍️✂️🔌💡<br>
+      🧴🪣🪴🎨<br>
+      🧩🎈🧻🪞
+    </div>
+  </div>
+
+  <div class="card">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+      <b style="font-size:14px;">✍️ 위험 요소 체크리스트</b>
+      <span id="safety-count" style="font-size:12px; color:#888;">0 / 8</span>
+    </div>
+    <div class="progress"><div class="bar" id="safety-bar"></div></div>
+    <div class="hazard-list" id="hazard-list">
+      <div class="hazard-item" data-h="1"><div class="chk">✓</div><div class="label">뾰족한 모서리 (책상·선반)</div></div>
+      <div class="hazard-item" data-h="2"><div class="chk">✓</div><div class="label">삼킬 수 있는 작은 부품</div></div>
+      <div class="hazard-item" data-h="3"><div class="chk">✓</div><div class="label">바닥에 늘어진 전선</div></div>
+      <div class="hazard-item" data-h="4"><div class="chk">✓</div><div class="label">손 닿는 높이의 콘센트</div></div>
+      <div class="hazard-item" data-h="5"><div class="chk">✓</div><div class="label">깨질 수 있는 유리·거울</div></div>
+      <div class="hazard-item" data-h="6"><div class="chk">✓</div><div class="label">쓰러질 수 있는 물건</div></div>
+      <div class="hazard-item" data-h="7"><div class="chk">✓</div><div class="label">기어오를 수 있는 가구</div></div>
+      <div class="hazard-item" data-h="8"><div class="chk">✓</div><div class="label">뜨거운 물건 (정수기 등)</div></div>
+    </div>
+    <div class="celebrate" id="safety-celebrate">
+      🏆 <b>완벽한 안전 보안관!</b><br>
+      <span style="font-size:12px; color:#666;">선생님은 매일 이 모든 걸 체크하고 있어요.</span>
+    </div>
+  </div>
+</div>
+
+<!-- Storytelling Panel -->
+<div class="panel" id="panel-story">
+  <div class="card">
+    <span class="badge-tag">🎤 체험</span>
+    <h2>1분 구연동화왕 도전!</h2>
+    <p>아래 버튼을 눌러 우리 조의 동화를 뽑고, 타이머로 1분 연습해보세요.</p>
+  </div>
+
+  <div class="card">
+    <b style="font-size:13px;">🎴 오늘의 동화 카드</b>
+    <div class="story-deck">
+      <div class="story-card" id="story-card">
+        <span class="big-emoji">🎲</span>
+        <h3>카드를 뽑아주세요</h3>
+        <div class="hint">아래 버튼을 누르면 동화가 랜덤으로 정해져요</div>
+      </div>
+    </div>
+    <button class="btn" id="draw-btn">🎴 동화 뽑기</button>
+  </div>
+
+  <div class="card">
+    <b style="font-size:13px;">⏱️ 1분 연습 타이머</b>
+    <div class="timer" id="timer">01:00</div>
+    <div class="btn-row">
+      <button class="btn blue" id="start-btn">▶ 시작</button>
+      <button class="btn ghost" id="reset-btn">↺ 리셋</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <b style="font-size:13px;">✅ 발표 전 체크</b>
+    <div class="checklist">
+      <div class="check-row" data-c="v1"><div class="mini-chk">✓</div><div class="lbl">등장인물 목소리가 서로 다르다</div></div>
+      <div class="check-row" data-c="v2"><div class="mini-chk">✓</div><div class="lbl">몸짓이 교실 뒤에서도 보인다</div></div>
+      <div class="check-row" data-c="v3"><div class="mini-chk">✓</div><div class="lbl">추임새("우와~", "어머나!")가 있다</div></div>
+      <div class="check-row" data-c="v4"><div class="mini-chk">✓</div><div class="lbl">1분 안에 끝난다</div></div>
+      <div class="check-row" data-c="v5"><div class="mini-chk">✓</div><div class="lbl">5살이 들어도 이해된다</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Q&A Panel -->
+<div class="panel" id="panel-qa">
+  <div class="card">
+    <span class="badge-tag">🙋 질문</span>
+    <h2>선생님께 직접 물어보세요</h2>
+    <p>궁금한 점을 남기면 특강 마지막에 답변해드려요.</p>
+  </div>
+
+  <div class="card">
+    <div class="q-form">
+      <textarea id="q-input" placeholder="예) 유치원 선생님이 되려면 피아노를 꼭 쳐야 하나요?"></textarea>
+      <button class="btn mint" id="q-submit">📮 질문 보내기</button>
+    </div>
+    <div class="my-qs" id="my-qs"></div>
+  </div>
+
+  <div class="card">
+    <b style="font-size:13px;">💡 다른 친구들이 자주 묻는 질문</b>
+    <div class="checklist" style="margin-top:6px;">
+      <div class="check-row"><div class="lbl" style="text-decoration:none; color:#555;">💬 남자 유치원 선생님도 있나요?</div></div>
+      <div class="check-row"><div class="lbl" style="text-decoration:none; color:#555;">💬 월급은 어느 정도예요?</div></div>
+      <div class="check-row"><div class="lbl" style="text-decoration:none; color:#555;">💬 방학은 있나요?</div></div>
+      <div class="check-row"><div class="lbl" style="text-decoration:none; color:#555;">💬 문과·이과 상관 없나요?</div></div>
+    </div>
+  </div>
+</div>
+
+<footer>유치원 교사 진로 특강 · 중학생 대상 학생 활동 페이지</footer>
+
+<script>
+  // Tab switching
+  document.querySelectorAll('.tab').forEach(t => {
+    t.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(x => x.classList.remove('active'));
+      t.classList.add('active');
+      document.getElementById('panel-' + t.dataset.tab).classList.add('active');
+    });
+  });
+
+  // Safety scout
+  const hazards = document.querySelectorAll('.hazard-item');
+  const safetyCount = document.getElementById('safety-count');
+  const safetyBar = document.getElementById('safety-bar');
+  const safetyCelebrate = document.getElementById('safety-celebrate');
+  hazards.forEach(h => {
+    h.addEventListener('click', () => {
+      h.classList.toggle('done');
+      const done = document.querySelectorAll('.hazard-item.done').length;
+      safetyCount.textContent = done + ' / 8';
+      safetyBar.style.width = (done/8*100) + '%';
+      if (done === 8) safetyCelebrate.classList.add('show');
+      else safetyCelebrate.classList.remove('show');
+    });
+  });
+
+  // Story cards
+  const stories = [
+    {emoji:'🐺🐷🐷🐷', title:'아기돼지 삼형제', hint:'늑대의 "후~!" / 돼지들의 비명 / 내레이터'},
+    {emoji:'🐢🐰', title:'토끼와 거북이', hint:'잘난 척하는 토끼 / 꾸준한 거북이 / 응원하는 동물들'},
+    {emoji:'👧🐺🧺', title:'빨간 모자', hint:'"할머니, 눈이 왜 이렇게 커요?" 장면'},
+    {emoji:'🌞🌙🐯', title:'해님 달님', hint:'호랑이 쫓기는 장면 / 동아줄 내려오는 순간'},
+    {emoji:'🐜🦗', title:'개미와 베짱이', hint:'노래하는 베짱이 / 땀 흘리는 개미'},
+    {emoji:'🦊🍇', title:'여우와 신포도', hint:'점프하는 여우 / "흥! 저건 신포도야"'},
+    {emoji:'👦🌱', title:'잭과 콩나무', hint:'콩나무가 쑥쑥 자라는 장면 / 거인의 목소리'},
+    {emoji:'🐭🐭🐭', title:'시골 쥐 서울 쥐', hint:'서울 쥐의 자랑 / 무서운 고양이 등장'},
+    {emoji:'👵🌰', title:'혹부리 영감', hint:'노래하는 할아버지 / 도깨비와의 만남'},
+    {emoji:'🐇🌕', title:'달 토끼 이야기', hint:'방아 찧는 토끼 / 구름 위 장면'}
+  ];
+  const storyCard = document.getElementById('story-card');
+  document.getElementById('draw-btn').addEventListener('click', () => {
+    storyCard.classList.add('flipping');
+    setTimeout(() => {
+      const s = stories[Math.floor(Math.random()*stories.length)];
+      storyCard.innerHTML = `<span class="big-emoji">${s.emoji}</span><h3>${s.title}</h3><div class="hint">${s.hint}</div>`;
+      storyCard.classList.remove('flipping');
+    }, 200);
+  });
+
+  // Timer
+  let timerSec = 60, timerId = null;
+  const timerEl = document.getElementById('timer');
+  const startBtn = document.getElementById('start-btn');
+  function render(){ const m=String(Math.floor(timerSec/60)).padStart(2,'0'); const s=String(timerSec%60).padStart(2,'0'); timerEl.textContent = `${m}:${s}`; timerEl.classList.toggle('warn', timerSec<=10 && timerSec>0); timerEl.classList.toggle('end', timerSec===0); }
+  startBtn.addEventListener('click', () => {
+    if (timerId) { clearInterval(timerId); timerId=null; startBtn.textContent='▶ 시작'; return; }
+    startBtn.textContent='⏸ 일시정지';
+    timerId = setInterval(() => {
+      if (timerSec <= 0) { clearInterval(timerId); timerId=null; startBtn.textContent='▶ 시작'; if (navigator.vibrate) navigator.vibrate([200,100,200]); return; }
+      timerSec--; render();
+    }, 1000);
+  });
+  document.getElementById('reset-btn').addEventListener('click', () => {
+    clearInterval(timerId); timerId=null; timerSec=60; render(); startBtn.textContent='▶ 시작';
+  });
+  render();
+
+  // Checklist
+  document.querySelectorAll('.check-row[data-c]').forEach(r => {
+    r.addEventListener('click', () => r.classList.toggle('on'));
+  });
+
+  // Q submission (localStorage)
+  const myQs = document.getElementById('my-qs');
+  function renderQs(){
+    const list = JSON.parse(localStorage.getItem('myQs')||'[]');
+    myQs.innerHTML = list.map((q,i) => `<div class="my-q">✅ ${q}</div>`).join('');
+  }
+  document.getElementById('q-submit').addEventListener('click', () => {
+    const input = document.getElementById('q-input');
+    const v = input.value.trim();
+    if (!v) return;
+    const list = JSON.parse(localStorage.getItem('myQs')||'[]');
+    list.push(v);
+    localStorage.setItem('myQs', JSON.stringify(list));
+    input.value = '';
+    renderQs();
+  });
+  renderQs();
+</script>
+</body>
+</html>
