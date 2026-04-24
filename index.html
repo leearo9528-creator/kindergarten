@@ -23,12 +23,7 @@
     text-align: left;
     padding: 14px 24px;
     box-sizing: border-box;
-    display: flex !important;
-    flex-direction: column;
-    justify-content: center;
-    height: 100%;
   }
-  .reveal .slides section > * { flex-shrink: 0; }
   .reveal h1, .reveal h2, .reveal h3, .reveal h4 {
     font-family: 'Pretendard', sans-serif;
     font-weight: 800;
@@ -57,7 +52,7 @@
   .reveal .title-slide {
     background: linear-gradient(135deg, #FFE5EC 0%, #FFC8DD 50%, #BDE0FE 100%);
     text-align: center !important;
-    height: 100%;
+    padding-top: 80px !important;
   }
   .reveal .title-slide h1 {
     font-size: 2.6em;
@@ -74,7 +69,7 @@
     background: linear-gradient(135deg, var(--pink) 0%, var(--purple) 100%);
     color: white !important;
     text-align: center !important;
-    height: 100%;
+    padding-top: 120px !important;
   }
   .section-cover * { color: white !important; }
   .section-cover .big-num {
@@ -939,7 +934,7 @@
     hash: true,
     controls: true,
     progress: true,
-    center: false,
+    center: true,
     transition: 'slide',
     slideNumber: 'c/t',
     width: 1280,
